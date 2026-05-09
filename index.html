@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Fiche de débit Dressing Pro v7</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:13px}
+label{font-size:12px;color:#666;display:block;margin-bottom:3px}
+input[type=number],input[type=text],input[type=date],select{width:100%;height:32px;padding:0 9px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:12px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:#1D9E75}
+input[type=checkbox]{cursor:pointer;accent-color:#1D9E75;width:14px;height:14px}
+button{padding:7px 15px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:12px;cursor:pointer;font-family:inherit}
+button:hover{background:#f0f0f0}
+.btn-g{background:#1D9E75;color:#fff;border-color:#0F6E56}.btn-g:hover{background:#0F6E56}
+.btn-b{background:#185FA5;color:#fff;border-color:#0e4070}.btn-b:hover{background:#0e4070}
+.btn-r{background:#fef0f0;color:#c0392b;border-color:#f5c6c6}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.card-sub{background:#f8f8f6;border:1px solid #eee;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.sep{border:none;border-top:1px solid #eee;margin:.6rem 0}
+.tab-bar{display:flex;border-bottom:1px solid #ddd;margin-bottom:1rem;flex-wrap:wrap}
+.tab{padding:8px 16px;font-size:12px;cursor:pointer;border:none;background:none;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#1D9E75;border-bottom:2px solid #1D9E75;font-weight:500}
+.dt{width:100%;border-collapse:collapse;font-size:11px}
+.dt th{background:#f8f8f6;padding:6px 5px;text-align:left;font-weight:500;font-size:10px;color:#888;border-bottom:1px solid #eee;white-space:nowrap}
+.dt td{padding:5px 5px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.dt tr:hover td{background:#fafaf8}
+.pill{display:inline-block;padding:1px 7px;border-radius:3px;font-size:10px;font-weight:500;white-space:nowrap}
+.p-e{background:#EEEDFE;color:#3C3489}.p-m{background:#E1F5EE;color:#085041}
+.p-h{background:#E6F1FB;color:#0C447C}.p-c{background:#FAEEDA;color:#633806}.p-b{background:#f0ede8;color:#555}
+.sc{background:#f5f5f3;border-radius:8px;padding:.55rem .9rem}
+.sc-l{font-size:10px;color:#888}.sc-v{font-size:18px;font-weight:500}
+.bdg{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:500}
+.bt{background:#E1F5EE;color:#085041}.ba{background:#FAEEDA;color:#633806}
+.bp{background:#EEEDFE;color:#3C3489}.bb{background:#E6F1FB;color:#0C447C}
+.bok{background:#EAF3DE;color:#27500A}.bw{background:#FAEEDA;color:#854F0B}.bor{background:#fef0f0;color:#c0392b}
+.st{font-size:10px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.04em;margin:.65rem 0 .3rem}
+.fp-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rg{display:flex;gap:6px;flex-wrap:wrap}
+.rc{display:flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;flex:1;min-width:110px}
+.rc:hover{background:#f5f5f3}.rc.sel{border-color:#1D9E75}
+.rc input{width:14px;height:14px;flex-shrink:0;accent-color:#1D9E75}
+.fg{display:flex;gap:8px}
+.fc{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 14px;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:11px;background:#fff;flex:1;max-width:170px}
+.fc:hover{background:#f5f5f3}.fc.sel{border-color:#1D9E75}
+.s32box{background:#f5f5f3;border-radius:8px;padding:8px 12px;font-size:11px;margin-bottom:.5rem}
+.man-toggle{display:flex;align-items:center;gap:5px;margin-top:4px}
+.man-toggle input{width:13px;height:13px}
+.man-toggle label{font-size:11px;color:#185FA5;cursor:pointer;margin:0}
+.man-dims{display:none;margin-top:4px;display:none}
+.man-dims input{height:28px;font-size:11px}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff;font-size:11px;margin:0;padding:0}
+  .tab-bar,.no-print{display:none!important}
+  /* Par défaut : masquer tous les onglets */
+  #tab-config,#tab-liste,#tab-debit,#tab-conso{display:none!important}
+  /* Afficher uniquement l'onglet demandé via data-print-tab */
+  body[data-print-tab="debit"] #tab-debit{display:block!important}
+  body[data-print-tab="liste"] #tab-liste{display:block!important}
+  body[data-print-tab="conso"] #tab-conso{display:block!important}
+  /* Si aucun attribut (impression directe) : afficher le débit */
+  body:not([data-print-tab]) #tab-debit{display:block!important}
+  .card{border:1px solid #ddd;border-radius:6px;page-break-inside:avoid;margin-bottom:8px;padding:10px 12px}
+  .dt{font-size:9px}
+  .dt th{font-size:9px;padding:4px 3px}
+  .dt td{font-size:9px;padding:4px 3px}
+  .pill,.bdg{font-size:8px!important;padding:1px 4px!important;-webkit-print-color-adjust:exact}
+  h1,h2,h3{page-break-after:avoid}
+  table{page-break-inside:auto}
+  tr{page-break-inside:avoid;page-break-after:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  svg{max-width:80px!important}
+  /* Forcer les couleurs des chants en impression */
+  [style*="color:#1D9E75"],[style*="color: #1D9E75"]{color:#1D9E75!important}
+  [style*="color:#185FA5"],[style*="color: #185FA5"]{color:#185FA5!important}
+  [style*="color:#3C3489"]{color:#3C3489!important}
+  /* Masquer le conteneur global et n'imprimer que le débit */
+  body > div > div:first-child{display:none!important}
+}
+</style>
+</head>
+<body>
+<div style="max-width:1150px;margin:0 auto;padding:16px">
+
+<div style="background:#fff;border-radius:12px;padding:10px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid #e8e8e8">
+  <span class="pill p-e" style="font-size:11px;padding:3px 10px">EGGER / MDF</span>
+  <span style="font-size:15px;font-weight:500">Dressing sur mesure — Fiche de débit Pro v7</span>
+  <span style="font-size:11px;color:#888">Dims manuelles · Tiroirs · L1/L2/l1/l2 · Sys32 réversible</span>
+</div>
+
+<!-- BARRE PROJETS SUPABASE -->
+<div class="card no-print" style="margin-bottom:.6rem;padding:10px 14px">
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px">
+    <span style="font-size:11px;font-weight:600;color:#3C3489">☁ Base de données</span>
+    <select id="proj-list" style="height:32px;font-size:12px;min-width:220px;border-radius:8px;border:1px solid #c0baee;padding:0 8px;background:#fff" onchange="loadProjectFromSelect()">
+      <option value="">— Sélectionner un projet —</option>
+    </select>
+    <button onclick="saveProject()" class="btn-g" style="padding:5px 12px;font-size:11px">💾 Sauvegarder</button>
+    <button onclick="saveProjectAs()" style="padding:5px 12px;font-size:11px">💾 Sauvegarder sous…</button>
+    <button onclick="newProject()" style="padding:5px 12px;font-size:11px">➕ Nouveau</button>
+    <button onclick="deleteProject()" class="btn-r" style="padding:5px 12px;font-size:11px">🗑 Supprimer</button>
+    <span id="db-status" style="width:8px;height:8px;border-radius:50%;background:#ccc;display:inline-block;margin-left:4px" title="Connexion base de données"></span>
+    <button onclick="exportJSON()" style="padding:5px 10px;font-size:10px;background:#f0f0f0;border-color:#ccc;color:#666;margin-left:8px">⬇ JSON local</button>
+    <label style="padding:5px 10px;font-size:10px;cursor:pointer;border:1px solid #ccc;border-radius:8px;background:#f0f0f0;color:#666">
+      ⬆ JSON local<input type="file" accept=".json" onchange="importJSON(event)" style="display:none"/>
+    </label>
+  </div>
+  <div id="proj-status" style="font-size:10px;color:#888;font-style:italic"></div>
+</div>
+
+<div class="tab-bar no-print">
+  <button class="tab active" onclick="showTab('config')">⚙ Paramètres</button>
+  <button class="tab" onclick="showTab('liste')">📋 Caissons</button>
+  <button class="tab" onclick="showTab('debit')">📄 Fiche de débit</button>
+  <button class="tab" onclick="showTab('conso')">💰 Matériaux</button>
+</div>
+
+<div id="tab-config">
+<!-- PROJET -->
+<div class="card">
+  <div class="st">Projet</div>
+  <div class="g6">
+    <div><label>Nom projet</label><input id="p-nom" value="Dressing sur mesure"/></div>
+    <div><label>Client</label><input id="p-client" placeholder="Nom client"/></div>
+    <div><label>Poseur / menuisier</label><input id="p-poseur" placeholder="Artisan"/></div>
+    <div><label>Date</label><input id="p-date" type="date"/></div>
+    <div><label>N° devis</label><input id="p-devis" placeholder="DEV-001"/></div>
+    <div><label>Notes projet</label><input id="p-notes-proj" placeholder="livraison, finition…"/></div>
+  </div>
+</div>
+
+<!-- CAISSON -->
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+    <div class="st" style="margin:0">Nouveau caisson</div>
+    <span class="bdg bt" id="cnt">0 caisson(s)</span>
+  </div>
+
+  <!-- REPÈRE & DIMS -->
+  <div class="st">Repère &amp; dimensions</div>
+  <div class="g6" style="margin-bottom:.5rem">
+    <div><label>Repère</label><input id="c-nom" placeholder="C01 Penderie G"/></div>
+    <div><label>Largeur ext. mm</label><input id="c-l" type="number" value="600" oninput="liveS32()"/></div>
+    <div><label>Hauteur ext. mm</label><input id="c-h" type="number" value="2200" oninput="liveS32()"/></div>
+    <div><label>Profondeur ext. mm</label><input id="c-p" type="number" value="580" oninput="liveS32()"/></div>
+    <div><label>Quantité</label><input id="c-qty" type="number" value="1" min="1" max="20"/></div>
+    <div><label>Notes caisson</label><input id="c-notes" placeholder="angle, mural…"/></div>
+  </div>
+
+  <!-- STRUCTURE -->
+  <div class="st">Structure — joues latérales &amp; tablette haute</div>
+  <div class="g5" style="margin-bottom:.4rem">
+    <div><label>Matériau</label>
+      <select id="c-mat"><option value="EGGER">EGGER mélaminé</option><option value="MDF mélaminé">MDF mélaminé</option><option value="MDF brut">MDF brut</option></select>
+    </div>
+    <div><label>Épaisseur mm</label>
+      <select id="c-ep" onchange="liveS32()"><option value="19" selected>19</option><option value="18">18</option><option value="22">22</option><option value="16">16</option></select>
+    </div>
+    <div>
+  <label>Référence / Décor EGGER</label>
+  <div style="display:flex;gap:4px">
+    <select id="c-decor-select" onchange="applyDecorSelect()" style="flex:1;height:32px;font-size:11px;border-radius:8px;border:1px solid #ddd;padding:0 6px;background:#fff">
+      <option value="">— Catalogue EGGER —</option>
+    </select>
+    <input id="c-decor" placeholder="ou saisie libre H3303 ST10" style="flex:1;font-size:11px"/>
+  </div>
+</div>
+    <div><label>Rainure fond mm</label>
+      <select id="c-rainure" onchange="liveS32()"><option value="10">10</option><option value="8">8</option><option value="0">0 (vissé)</option></select>
+    </div>
+    <div><label>Hauteur plinthe mm</label><input id="c-hpl" type="number" value="100" oninput="liveS32()"/></div>
+  </div>
+
+  <!-- SENS DU FIL -->
+  <div class="st">Sens du fil</div>
+  <div style="margin-bottom:.5rem">
+    <div class="fg">
+      <div class="fc sel" data-fil="L" onclick="selFil(this)" style="max-width:160px">
+        <svg width="38" height="26" viewBox="0 0 38 26"><rect x="1" y="1" width="36" height="24" rx="2" fill="none" stroke="#ccc" stroke-width="1"/>
+          <line x1="1" y1="7" x2="37" y2="7" stroke="#ccc" stroke-width=".6" stroke-dasharray="3,2"/>
+          <line x1="1" y1="13" x2="37" y2="13" stroke="#ccc" stroke-width=".6" stroke-dasharray="3,2"/>
+          <line x1="1" y1="19" x2="37" y2="19" stroke="#ccc" stroke-width=".6" stroke-dasharray="3,2"/>
+          <path d="M7 13 L31 13 M27 9 L31 13 L27 17" stroke="#1D9E75" stroke-width="1.5" fill="none"/></svg>
+        <span style="font-weight:500">Sens L (horizontal)</span>
+      </div>
+      <div class="fc" data-fil="l" onclick="selFil(this)" style="max-width:160px">
+        <svg width="38" height="26" viewBox="0 0 38 26"><rect x="1" y="1" width="36" height="24" rx="2" fill="none" stroke="#ccc" stroke-width="1"/>
+          <line x1="10" y1="1" x2="10" y2="25" stroke="#ccc" stroke-width=".6" stroke-dasharray="3,2"/>
+          <line x1="19" y1="1" x2="19" y2="25" stroke="#ccc" stroke-width=".6" stroke-dasharray="3,2"/>
+          <line x1="28" y1="1" x2="28" y2="25" stroke="#ccc" stroke-width=".6" stroke-dasharray="3,2"/>
+          <path d="M19 4 L19 22 M15 18 L19 22 L23 18" stroke="#185FA5" stroke-width="1.5" fill="none"/></svg>
+        <span style="font-weight:500">Sens l (vertical)</span>
+      </div>
+    </div>
+    <input type="hidden" id="c-fil" value="L"/>
+  </div>
+
+  <!-- ═══ JOUES ═══ -->
+  <div class="st">Joues latérales (ext.)</div>
+  <div class="card-sub">
+    <div class="g4" style="margin-bottom:.4rem">
+      <div><label>Chant(s) joues</label><div id="fp-joue"></div></div>
+      <div colspan="3"></div>
+    </div>
+    <div id="man-joue-toggle" class="man-toggle">
+      <input type="checkbox" id="c-joue-man" onchange="toggleMan('joue')"/>
+      <label for="c-joue-man">Dimensions manuelles</label>
+    </div>
+    <div id="man-joue" class="man-dims" style="display:none">
+      <div class="g2" style="margin-top:6px">
+        <div><label>L mm (hauteur)</label><input id="c-joue-L" type="number" placeholder="auto"/></div>
+        <div><label>l mm (profondeur)</label><input id="c-joue-l" type="number" placeholder="auto"/></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FOND BAS & FOND HAUT ═══ -->
+  <div class="st">Fond bas</div>
+  <div class="card-sub">
+    <div class="g5" style="margin-bottom:.4rem">
+      <div><label>Matériau</label>
+        <select id="c-fbm" onchange="liveS32()"><option value="HDF 5mm">HDF 5mm</option><option value="CTP 8mm">CTP 8mm</option><option value="EGGER 8mm">EGGER 8mm</option><option value="MDF 10mm">MDF 10mm</option><option value="même">Même struct.</option></select>
+      </div>
+      <div><label>Référence</label><input id="c-fbd" placeholder="HDF blanc"/></div>
+      <div><label>Chant(s)</label><div id="fp-fondbas"></div></div>
+      <div></div><div></div>
+    </div>
+    <div class="man-toggle"><input type="checkbox" id="c-fb-man" onchange="toggleMan('fb')"/><label for="c-fb-man">Dimensions manuelles</label></div>
+    <div id="man-fb" style="display:none"><div class="g2" style="margin-top:6px">
+      <div><label>L mm</label><input id="c-fb-L" type="number" placeholder="auto"/></div>
+      <div><label>l mm</label><input id="c-fb-l" type="number" placeholder="auto"/></div>
+    </div></div>
+  </div>
+
+  <div class="st">Fond haut (tablette haute)</div>
+  <div class="card-sub">
+    <div class="g5" style="margin-bottom:.4rem">
+      <div><label>Matériau</label>
+        <select id="c-fhm" onchange="liveS32()"><option value="même struct.">Même struct.</option><option value="HDF 5mm">HDF 5mm</option><option value="CTP 8mm">CTP 8mm</option><option value="EGGER 8mm">EGGER 8mm</option><option value="MDF 10mm">MDF 10mm</option></select>
+      </div>
+      <div><label>Référence</label><input id="c-fhd" placeholder="si différent"/></div>
+      <div><label>Chant(s)</label><div id="fp-fondhaut"></div></div>
+      <div></div><div></div>
+    </div>
+    <div class="man-toggle"><input type="checkbox" id="c-fh-man" onchange="toggleMan('fh')"/><label for="c-fh-man">Dimensions manuelles</label></div>
+    <div id="man-fh" style="display:none"><div class="g2" style="margin-top:6px">
+      <div><label>L mm</label><input id="c-fh-L" type="number" placeholder="auto"/></div>
+      <div><label>l mm</label><input id="c-fh-l" type="number" placeholder="auto"/></div>
+    </div></div>
+  </div>
+
+  <!-- ═══ PLINTHE ═══ -->
+  <div class="st">Fond arrière</div>
+  <div class="card-sub">
+    <div class="g5" style="margin-bottom:.4rem">
+      <div><label>Matériau</label>
+        <select id="c-fam">
+          <option value="HDF 5mm">HDF 5mm</option>
+          <option value="CTP 8mm">CTP 8mm</option>
+          <option value="EGGER 8mm">EGGER 8mm</option>
+          <option value="MDF 10mm">MDF 10mm</option>
+          <option value="même struct.">Même struct.</option>
+        </select>
+      </div>
+      <div><label>Épaisseur mm</label>
+        <select id="c-fa-ep">
+          <option value="5" selected>5 (HDF)</option>
+          <option value="8">8 (CTP/EGGER)</option>
+          <option value="10">10 (MDF)</option>
+          <option value="19">19 (même struct.)</option>
+        </select>
+      </div>
+      <div><label>Référence</label><input id="c-fad" placeholder="ex: HDF blanc"/></div>
+      <div><label>Chant(s)</label><div id="fp-fondarriere"></div></div>
+      <div></div>
+    </div>
+    <div class="man-toggle"><input type="checkbox" id="c-fa-man" onchange="toggleMan('fa')"/><label for="c-fa-man">Dimensions manuelles</label></div>
+    <div id="man-fa" style="display:none"><div class="g2" style="margin-top:6px">
+      <div><label>L mm (largeur)</label><input id="c-fa-L" type="number" placeholder="auto"/></div>
+      <div><label>l mm (hauteur)</label><input id="c-fa-l" type="number" placeholder="auto"/></div>
+    </div></div>
+  </div>
+
+  <div class="st">Plinthe</div>
+  <div class="card-sub">
+    <div class="g4" style="margin-bottom:.4rem">
+      <div><label>Matériau</label><select id="c-plm"><option value="même">Même struct.</option><option value="MDF 19mm">MDF 19mm</option><option value="MDF 18mm">MDF 18mm</option></select></div>
+      <div><label>Référence</label><input id="c-pld" placeholder="si différent"/></div>
+      <div><label>Chant(s)</label><div id="fp-plinthe"></div></div>
+      <div></div>
+    </div>
+    <div class="man-toggle"><input type="checkbox" id="c-pl-man" onchange="toggleMan('pl')"/><label for="c-pl-man">Dimensions manuelles</label></div>
+    <div id="man-pl" style="display:none"><div class="g2" style="margin-top:6px">
+      <div><label>L mm</label><input id="c-pl-L" type="number" placeholder="auto"/></div>
+      <div><label>l mm (hauteur)</label><input id="c-pl-l" type="number" placeholder="auto"/></div>
+    </div></div>
+  </div>
+
+  <!-- ═══ SYSTÈME 32 ═══ -->
+  <div class="st">Système 32 / 37 — usinage crémaillère</div>
+  <div class="rg" style="margin-bottom:.5rem" id="ug">
+    <label class="rc sel" onclick="selU('aucun',this)"><input type="radio" name="u" checked/>Aucun</label>
+    <label class="rc" onclick="selU('1f',this)"><input type="radio" name="u"/>Crémaillère 1 face</label>
+    <label class="rc" onclick="selU('2f',this)"><input type="radio" name="u"/>Crémaillère 2 faces</label>
+    <label class="rc" onclick="selU('charn',this)"><input type="radio" name="u"/>Perçage charnière</label>
+  </div>
+  <div id="s32-params" style="display:none">
+    <div class="g5" style="margin-bottom:.4rem">
+      <div><label>Type de crémaillère</label>
+        <select id="c-crem-type" onchange="liveS32()" style="font-size:11px">
+          <option value="1f-av">1 rangée — avant seul.</option>
+          <option value="1f-avar">1 rangée — av. + ar.</option>
+          <option value="2f-av">2 rangées — avant seul.</option>
+          <option value="2f-avar" selected>2 rangées — av. + ar.</option>
+        </select>
+      </div>
+      <div><label>Cote chant avant mm</label><input id="c-r1" type="number" value="37" oninput="liveS32()"/></div>
+      <div><label>Cote chant arrière mm</label><input id="c-r2" type="number" value="37" oninput="liveS32()"/></div>
+      <div><label>Pas mm</label><select id="c-pas" onchange="liveS32()"><option value="32" selected>32</option><option value="64">64</option></select></div>
+      <div><label>Type taquet</label><input id="c-taq" value="Non débouchant Ø5mm"/></div>
+    </div>
+    <div id="s32-prev" class="s32box"></div>
+  </div>
+
+  <!-- ═══ SÉPARATIONS ═══ -->
+  <div class="st">Séparations verticales intérieures</div>
+  <div class="card-sub">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem">
+      <span style="font-size:11px;color:#666">Crée des sous-sections avec tablettes et portes indépendantes.</span>
+      <button onclick="addSepLigne()" style="padding:5px 12px;font-size:11px;background:#EEEDFE;color:#3C3489;border:1px solid #c0baee;border-radius:8px;cursor:pointer">+ Ajouter une séparation</button>
+    </div>
+    <div id="sep-lignes-list"></div>
+  </div>
+
+  <!-- ═══ TABLETTES ═══ -->
+  <div class="st">Tablettes intérieures</div>
+  <div class="card-sub">
+    <div class="g5" style="margin-bottom:.4rem">
+      <div><label>Nb tablettes</label><input id="c-tab" type="number" value="2" min="0"/></div>
+      <div><label>Matériau</label><select id="c-tabm"><option value="même">Même struct.</option><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option><option value="MDF brut">MDF brut</option><option value="CTP">CTP</option></select></div>
+      <div><label>Épaisseur</label><select id="c-tabep"><option value="même">Même</option><option value="19">19</option><option value="18">18</option><option value="22">22</option></select></div>
+      <div><label>Référence</label><input id="c-tabd" placeholder="si différent"/></div>
+      <div><label>Chant(s)</label><div id="fp-tab"></div></div>
+    </div>
+    <div class="man-toggle"><input type="checkbox" id="c-tab-man" onchange="toggleMan('tab')"/><label for="c-tab-man">Dimensions manuelles</label></div>
+    <div id="man-tab" style="display:none"><div class="g2" style="margin-top:6px">
+      <div><label>L mm</label><input id="c-tab-L" type="number" placeholder="auto"/></div>
+      <div><label>l mm (profondeur)</label><input id="c-tab-l" type="number" placeholder="auto"/></div>
+    </div></div>
+  </div>
+
+  <!-- ═══ PORTES ═══ -->
+  <div class="st">Portes</div>
+  <div class="card-sub">
+    <div class="g5" style="margin-bottom:.4rem">
+      <div><label>Nb portes</label><input id="c-nport" type="number" value="0" min="0"/></div>
+      <div><label>Type</label><select id="c-tport"><option value="Battante">Battante</option><option value="Coulissante">Coulissante</option><option value="Aucune">Aucune</option></select></div>
+      <div><label>Matériau</label><select id="c-portm"><option value="même">Même struct.</option><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option><option value="MDF brut">MDF brut</option></select></div>
+      <div><label>Épaisseur</label><select id="c-portep"><option value="même">Même</option><option value="19">19</option><option value="18">18</option><option value="16">16</option></select></div>
+      <div><label>Référence</label><input id="c-portd" placeholder="si différent"/></div>
+    </div>
+    <div class="g4" style="margin-bottom:.4rem">
+      <div><label>Jeu haut mm</label><input id="c-jh" type="number" value="2"/></div>
+      <div><label>Jeu bas mm</label><input id="c-jb" type="number" value="2"/></div>
+      <div><label>Jeu entre portes mm</label><input id="c-je" type="number" value="3"/></div>
+      <div><label>Recouvrement joue mm</label><input id="c-rec" type="number" value="0"/></div>
+    </div>
+    <div><label>Chant(s)</label><div id="fp-port" style="margin-bottom:6px"></div></div>
+    <div class="man-toggle"><input type="checkbox" id="c-port-man" onchange="toggleMan('port')"/><label for="c-port-man">Dimensions manuelles</label></div>
+    <div id="man-port" style="display:none"><div class="g2" style="margin-top:6px">
+      <div><label>L mm (par porte)</label><input id="c-port-L" type="number" placeholder="auto"/></div>
+      <div><label>l mm (hauteur)</label><input id="c-port-l" type="number" placeholder="auto"/></div>
+    </div></div>
+  </div>
+
+  <!-- ═══ TIROIRS ═══ -->
+  <div class="st">Tiroirs</div>
+  <div class="card-sub">
+    <div class="g3" style="margin-bottom:.6rem">
+      <div>
+        <label>Épaisseur réservée coulisse mm</label>
+        <input id="c-tir-epcoul" type="number" value="12.7" step="0.1" oninput="updateLargCaisse()" style="font-weight:500"/>
+      </div>
+      <div>
+        <label>Largeur caisse calculée (auto)</label>
+        <input id="c-tir-largcaisse" type="text" readonly style="background:#f0f0f0;color:#1D9E75;font-weight:500;height:32px;padding:0 9px;border:1px solid #ddd;border-radius:8px;width:100%"/>
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:2px">
+        <button onclick="addTiroirLigne()" class="btn-b" style="padding:6px 14px;font-size:12px;background:#185FA5;color:#fff;border-color:#0e4070">+ Ajouter un tiroir</button>
+      </div>
+    </div>
+    <div id="tiroir-lignes-list"></div>
+  </div>
+
+  <!-- ═══ PIÈCES SUPPLÉMENTAIRES ═══ -->
+  <div class="st">Pièces supplémentaires libres</div>
+  <div class="card-sub">
+    <div id="pieces-sup-list"></div>
+    <button onclick="addPieceSup()" style="margin-top:6px;font-size:11px;padding:5px 12px">+ Ajouter une pièce</button>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-top:.75rem;flex-wrap:wrap">
+    <button class="btn-g" onclick="addC()">+ Ajouter ce caisson</button>
+    <button onclick="rstForm()">Réinitialiser</button>
+  </div>
+</div>
+<div id="lst-r"></div>
+</div><!-- /tab-config -->
+
+<div id="tab-liste" style="display:none">
+  <div style="display:flex;gap:8px;margin-bottom:.75rem" class="no-print">
+    <button class="btn-g" onclick="printTab('liste')">🖨 Imprimer la liste des caissons</button>
+  </div>
+  <div id="lst-f"></div>
+</div>
+
+<div id="tab-debit" style="display:none">
+  <div id="stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem"></div>
+  <div id="fiche"></div>
+  <div style="display:flex;gap:8px;margin-top:.75rem;flex-wrap:wrap" class="no-print">
+    <button class="btn-g" onclick="printDebit()">🖨 Imprimer / PDF</button>
+  </div>
+</div>
+
+<div id="tab-conso" style="display:none">
+  <div style="display:flex;gap:8px;margin-bottom:.75rem" class="no-print">
+    <button class="btn-g" onclick="printTab('conso')">🖨 Imprimer matériaux &amp; nomenclature</button>
+  </div>
+  <div id="conso"></div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+var EGGER_DECORS = {
+  "Blancs & Unis clairs": [
+    {ref:"W980 ST2",  nom:"Blanc Kaolin"},
+    {ref:"W980 SM",   nom:"Blanc (Soft Mat)"},
+    {ref:"W908 ST2",  nom:"Blanc Craie"},
+    {ref:"W908 SM",   nom:"Blanc Craie (Soft Mat)"},
+    {ref:"W1000 ST9", nom:"Blanc Premium"},
+    {ref:"W1100 ST9", nom:"Blanc Alpin"},
+    {ref:"U104 ST9",  nom:"Blanc Albâtre"},
+    {ref:"U222 ST9",  nom:"Blanc Écru"},
+    {ref:"U312 ST9",  nom:"Crème"}
+  ],
+  "Gris": [
+    {ref:"U702 ST9",  nom:"Gris Cachemire"},
+    {ref:"U705 ST9",  nom:"Gris Angora"},
+    {ref:"U708 ST9",  nom:"Gris Brume"},
+    {ref:"U727 ST9",  nom:"Gris Argile"},
+    {ref:"U732 ST9",  nom:"Gris Ciment"},
+    {ref:"U775 ST9",  nom:"Gris Ardoise"},
+    {ref:"U961 ST9",  nom:"Gris Anthracite"},
+    {ref:"U960 ST2",  nom:"Gris Onyx"}
+  ],
+  "Noirs & Foncés": [
+    {ref:"U999 ST2",  nom:"Noir"},
+    {ref:"U999 ST9",  nom:"Noir (ST9)"},
+    {ref:"U963 ST9",  nom:"Gris Graphite"}
+  ],
+  "Couleurs": [
+    {ref:"U599 ST9",  nom:"Bleu Indigo"},
+    {ref:"U655 ST9",  nom:"Bleu Gentiane"},
+    {ref:"U669 ST9",  nom:"Vert Cedre"},
+    {ref:"U398 ST9",  nom:"Brun Violine"},
+    {ref:"U313 ST9",  nom:"Jaune Mimosa"}
+  ],
+  "Chenes": [
+    {ref:"H1180 ST37",nom:"Chene Halifax Naturel"},
+    {ref:"H3303 ST10",nom:"Chene Hamilton Naturel"},
+    {ref:"H3307 ST10",nom:"Chene Hamilton Fume"},
+    {ref:"H3309 ST28",nom:"Chene Hamilton Brun"},
+    {ref:"H3157 ST12",nom:"Chene Vicenza"},
+    {ref:"H3152 G8",  nom:"Chene Vicenza Blanchi"},
+    {ref:"H3359 ST32",nom:"Chene Davenport Clair"},
+    {ref:"H3379 ST32",nom:"Chene Davenport Naturel"},
+    {ref:"H1344 ST32",nom:"Chene Sherman Cognac"},
+    {ref:"H1367 ST40",nom:"Casella Oak"},
+    {ref:"H1700 ST9", nom:"Chene Nebraska Naturel"},
+    {ref:"H3450 ST22",nom:"Fleetwood Blanc"},
+    {ref:"H3730 ST10",nom:"Chene Castella Naturel"},
+    {ref:"H3786 ST19",nom:"Bolivar Wood Naturel"}
+  ],
+  "Noyers": [
+    {ref:"H3700 ST10",nom:"Noyer du Pacifique Naturel"},
+    {ref:"H3703 ST10",nom:"Noyer du Pacifique Tabac"},
+    {ref:"H3840 ST9", nom:"Noyer Canberra Naturel"},
+    {ref:"H1307 ST19",nom:"Noyer Warmia Brun"},
+    {ref:"H1011 ST22",nom:"Noyer Davos Naturel"}
+  ],
+  "Autres Bois": [
+    {ref:"H1227 ST37",nom:"Frene Abano Marron"},
+    {ref:"H1247 ST37",nom:"Acacia Sheffield Graphite"},
+    {ref:"H1701 ST33",nom:"Orme Tossini Blanc"},
+    {ref:"H1702 ST33",nom:"Orme Tossini Brun Fonce"},
+    {ref:"H1210 ST33",nom:"Orme Tossini Grege"},
+    {ref:"H1708 ST17",nom:"Chataignier Brighton"},
+    {ref:"H3433 ST22",nom:"Pin Aland Polaire"}
+  ],
+  "Betons et Matieres": [
+    {ref:"F186 ST9",  nom:"Beton Chicago Gris Clair"},
+    {ref:"F274 ST9",  nom:"Beton Chicago Gris Fonce"},
+    {ref:"F812 ST9",  nom:"Marbre Levanto Blanc"},
+    {ref:"F800 ST9",  nom:"Marbre Cristal"},
+    {ref:"F244 ST76", nom:"Marbre Candela Anthracite"},
+    {ref:"F416 ST10", nom:"Marbre Levanto Rouge"},
+    {ref:"F052 ST75", nom:"Travertin Calais"}
+  ],
+  "Aluminium et Metaux": [
+    {ref:"F501 ST2",  nom:"Aluminium Brosse Titan"},
+    {ref:"F502 ST7",  nom:"Aluminium Brosse Fin"},
+    {ref:"F638 ST10", nom:"Chromix Argent"},
+    {ref:"F642 ST16", nom:"Chromix Bronze"}
+  ]
+};
+
+// ══════════════════════════════════════════════════════
+// DONNÉES GLOBALES
+// ══════════════════════════════════════════════════════
+let caissons=[], usin='aucun', piecesSupIdx=0;
+document.getElementById('p-date').value=new Date().toISOString().split('T')[0];
+
+const EPF={'HDF 5mm':5,'CTP 8mm':8,'EGGER 8mm':8,'MDF 10mm':10,'même':null,'même struct.':null};
+function pOf(m){if(!m)return'p-e';const v=m.toLowerCase();if(v.includes('hdf'))return'p-h';if(v.includes('ctp'))return'p-c';if(v.includes('brut'))return'p-b';if(v.includes('mdf'))return'p-m';return'p-e';}
+function rM(t,e){return`${t} ${e}mm`;}
+function gEp(mv,es){const v=EPF[mv];return v!=null?v:es;}
+
+// ══════════════════════════════════════════════════════
+// SÉLECTEUR FIL
+// ══════════════════════════════════════════════════════
+function selFil(el){document.querySelectorAll('.fc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');document.getElementById('c-fil').value=el.dataset.fil;}
+
+// ══════════════════════════════════════════════════════
+// USINAGE
+// ══════════════════════════════════════════════════════
+function selU(v,el){usin=v;document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');document.getElementById('s32-params').style.display=(v==='1f'||v==='2f')?'block':'none';liveS32();}
+
+// ══════════════════════════════════════════════════════
+// TIROIRS toggle
+// ══════════════════════════════════════════════════════
+function toggleTiroirs(){ updateLargCaisse(); }
+
+// ══════════════════════════════════════════════════════════
+// TIROIRS DYNAMIQUES — plusieurs tiroirs par caisson
+// ══════════════════════════════════════════════════════════
+var tiroirIdx = 0;
+
+function addTiroirLigne(){
+  var idx = tiroirIdx++;
+  var cont = document.getElementById('tiroir-lignes-list');
+  if(!cont) return;
+  var div = document.createElement('div');
+  div.id = 'tl-'+idx;
+  div.style.cssText = 'background:#fff;border:1px solid #e0e8f0;border-radius:8px;padding:8px 10px;margin-bottom:8px';
+  var html = '';
+  html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
+  html += '<span style="font-size:11px;font-weight:500;color:#185FA5">Tiroir '+(idx+1)+'</span>';
+  html += '<select id="tl-type-'+idx+'" onchange="toggleTiroirFacade('+idx+')" style="height:28px;font-size:11px;border-radius:6px;border:1px solid #ddd;padding:0 6px">';
+  html += '<option value="applique">Applique — caisse seule</option>';
+  html += '<option value="encastre">Encastré / affleurant</option>';
+  html += '</select>';
+  html += '<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;color:#185FA5">';
+  html += '<input type="checkbox" id="tl-cseule-'+idx+'" onchange="toggleTiroirFacade('+idx+')" style="width:13px;height:13px"/> Caisse seule';
+  html += '</label>';
+  html += '<button onclick="removeTiroir('+idx+')" class="btn-r" style="margin-left:auto;padding:2px 8px;font-size:10px">✕</button>';
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px">';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb tiroirs</label><input type="number" id="tl-nb-'+idx+'" value="1" min="1" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Hauteur caisse mm</label><input type="number" id="tl-hcaisse-'+idx+'" value="120" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Profondeur utile mm</label><input type="number" id="tl-prof-'+idx+'" value="450" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Épaisseur parois mm</label>';
+  html += '<select id="tl-epcaisse-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
+  html += '<option value="10">10</option><option value="12">12</option><option value="16">16</option><option value="19">19</option>';
+  html += '</select></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Jeu entre tiroirs mm</label><input type="number" id="tl-je-'+idx+'" value="3" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px">';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Matériau caisse</label>';
+  html += '<select id="tl-mat-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
+  html += '<option value="même">Même struct.</option><option value="MDF 10mm">MDF 10mm</option><option value="MDF mélaminé 12mm">MDF 12mm</option><option value="CTP 12mm">CTP 12mm</option>';
+  html += '</select></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Matériau fond</label>';
+  html += '<select id="tl-matfond-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
+  html += '<option value="HDF 5mm">HDF 5mm</option><option value="CTP 8mm">CTP 8mm</option><option value="même caisse">Même caisse</option>';
+  html += '</select></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Coulisse Cromic II</label>';
+  html += '<select id="tl-amort-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
+  html += '<option value="avec">Avec amortisseur</option><option value="sans">Sans amortisseur</option>';
+  html += '</select></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Référence caisse</label>';
+  html += '<input type="text" id="tl-ref-'+idx+'" placeholder="ex: MDF blanc" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px">';
+  html += '<div style="background:#f8f8f6;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Côtés ×2</div><div id="fp-tl-cote-'+idx+'"></div></div>';
+  html += '<div style="background:#f8f8f6;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Avant ×1</div><div id="fp-tl-avant-'+idx+'"></div></div>';
+  html += '<div style="background:#f8f8f6;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Arrière ×1</div><div id="fp-tl-arriere-'+idx+'"></div></div>';
+  html += '</div>';
+  html += '<div id="tl-facade-'+idx+'" style="display:none;background:#E6F1FB;border-radius:6px;padding:8px 10px;margin-top:4px">';
+  html += '<div style="font-size:10px;color:#0C447C;font-weight:500;margin-bottom:6px">Façade affleurante — Hettich 9073611 + plaque 9071595</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px">';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Jeu haut/bas mm</label><input type="number" id="tl-fjh-'+idx+'" value="1" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Jeu entre façades mm</label><input type="number" id="tl-fje-'+idx+'" value="2" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Matériau façade</label>';
+  html += '<select id="tl-fmat-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
+  html += '<option value="même">Même struct.</option><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option><option value="MDF brut">MDF brut</option>';
+  html += '</select></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Épaisseur façade</label>';
+  html += '<select id="tl-fep-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
+  html += '<option value="même">Même</option><option value="19">19</option><option value="18">18</option><option value="16">16</option>';
+  html += '</select></div></div>';
+  html += '<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">';
+  html += '<input type="checkbox" id="tl-fman-'+idx+'" onchange="document.getElementById(\'tl-fdims-'+idx+'\').style.display=this.checked?\'grid\':\'none\'" style="width:13px;height:13px"/>';
+  html += '<label for="tl-fman-'+idx+'" style="font-size:11px;cursor:pointer">Dimensions manuelles façade</label></div>';
+  html += '<div id="tl-fdims-'+idx+'" style="display:none;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">';
+  html += '<div><label style="font-size:10px">L mm</label><input type="number" id="tl-fl-'+idx+'" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px">l mm (hauteur)</label><input type="number" id="tl-fh-'+idx+'" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Chant(s) façade</label><div id="fp-tl-facade-'+idx+'"></div></div>';
+  html += '</div>';
+  div.innerHTML = html;
+  cont.appendChild(div);
+  buildFPmini('tl-cote-'+idx);
+  buildFPmini('tl-avant-'+idx);
+  buildFPmini('tl-arriere-'+idx);
+  buildFPmini('tl-facade-'+idx);
+}
+
+function removeTiroir(idx){
+  var el = document.getElementById('tl-'+idx);
+  if(el) el.remove();
+}
+
+function toggleTiroirFacade(idx){
+  var type = document.getElementById('tl-type-'+idx) ? document.getElementById('tl-type-'+idx).value : 'applique';
+  var cseule = document.getElementById('tl-cseule-'+idx) ? document.getElementById('tl-cseule-'+idx).checked : false;
+  var facDiv = document.getElementById('tl-facade-'+idx);
+  if(facDiv) facDiv.style.display = (type==='encastre' && !cseule) ? 'block' : 'none';
+}
+
+function rdTiroirs(){
+  var lines = [];
+  var els = document.querySelectorAll('[id^="tl-nb-"]');
+  els.forEach(function(el){
+    var idx = el.id.replace('tl-nb-','');
+    var fman = document.getElementById('tl-fman-'+idx) ? document.getElementById('tl-fman-'+idx).checked : false;
+    lines.push({
+      type: document.getElementById('tl-type-'+idx) ? document.getElementById('tl-type-'+idx).value : 'applique',
+      cseule: document.getElementById('tl-cseule-'+idx) ? document.getElementById('tl-cseule-'+idx).checked : false,
+      nb: +el.value||1,
+      hcaisse: +(document.getElementById('tl-hcaisse-'+idx)||{}).value||120,
+      prof: +(document.getElementById('tl-prof-'+idx)||{}).value||450,
+      epCaisse: +(document.getElementById('tl-epcaisse-'+idx)||{}).value||10,
+      je: +(document.getElementById('tl-je-'+idx)||{}).value||3,
+      mat: (document.getElementById('tl-mat-'+idx)||{}).value||'même',
+      matfond: (document.getElementById('tl-matfond-'+idx)||{}).value||'HDF 5mm',
+      amort: (document.getElementById('tl-amort-'+idx)||{}).value||'avec',
+      ref: (document.getElementById('tl-ref-'+idx)||{}).value||'',
+      chantCote: rdFPmini('tl-cote-'+idx),
+      chantAvant: rdFPmini('tl-avant-'+idx),
+      chantArriere: rdFPmini('tl-arriere-'+idx),
+      fmat: (document.getElementById('tl-fmat-'+idx)||{}).value||'même',
+      fep: (document.getElementById('tl-fep-'+idx)||{}).value||'même',
+      fjh: +(document.getElementById('tl-fjh-'+idx)||{}).value||1,
+      fje: +(document.getElementById('tl-fje-'+idx)||{}).value||2,
+      facadeMan: fman,
+      fL: fman ? +(document.getElementById('tl-fl-'+idx)||{}).value||0 : 0,
+      fH: fman ? +(document.getElementById('tl-fh-'+idx)||{}).value||0 : 0,
+      chantFacade: rdFPmini('tl-facade-'+idx)
+    });
+  });
+  return lines;
+}
+
+function calcTiroirs(tiroirLines,c,ep,largUtile,tirEpCoul,pieces){
+  if(!tiroirLines||!tiroirLines.length) return;
+  var epCoul = +tirEpCoul||12.7;
+  var largCaisse = Math.round(largUtile - 2*epCoul);
+  var CROMIC_SA={300:'263426',350:'263433',400:'263440',450:'263447',500:'263454',550:'263461',600:'263468'};
+  var CROMIC_AV={300:'263377',350:'263384',400:'263391',450:'263398',500:'263405',550:'263412',600:'263419'};
+  function cromCode(prof,amort){
+    var t = amort==='avec' ? CROMIC_AV : CROMIC_SA;
+    var ls = Object.keys(t).map(Number).sort(function(a,b){return a-b;});
+    var l = ls.find(function(x){return x>=prof;}) || ls[ls.length-1];
+    return {longueur:l, code:t[l]};
+  }
+  tiroirLines.forEach(function(tl,i){
+    var label = 'Tiroir '+(i+1);
+    var matC = (tl.mat==='même') ? rM(c.mat,ep) : tl.mat;
+    var matF = tl.matfond==='même caisse' ? matC : 'HDF 5mm';
+    var epF  = tl.matfond==='même caisse' ? tl.epCaisse : 5;
+    var crom = cromCode(tl.prof, tl.amort);
+    var coteL = tl.prof - tl.epCaisse;
+    var avArL = largCaisse - 2*tl.epCaisse;
+    var fondP = tl.prof - 2*tl.epCaisse;
+    var noteC = 'Largeur ext. caisse: '+largCaisse+'mm — Cromic II '+(tl.amort==='avec'?'avec':'sans')+' amort. '+crom.longueur+'mm réf.'+crom.code+' × '+tl.nb+' paire(s)';
+    pieces.push({nom:label+' — Côtés (×'+(tl.nb*2)+')', L:coteL, H:tl.hcaisse, qte:tl.nb*2, mat:matC, ep:tl.epCaisse, chants:tl.chantCote||[], decor:tl.ref, type:'tiroir-caisse', note:noteC});
+    pieces.push({nom:label+' — Avant (×'+tl.nb+')',        L:largCaisse, H:tl.hcaisse, qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantAvant||[], decor:tl.ref, type:'tiroir-caisse'});
+    pieces.push({nom:label+' — Arrière (×'+tl.nb+')',      L:avArL, H:tl.hcaisse, qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantArriere||[], decor:tl.ref, type:'tiroir-caisse'});
+    pieces.push({nom:label+' — Fond (×'+tl.nb+')',         L:avArL, H:fondP, qte:tl.nb, mat:matF, ep:epF, chants:[], decor:'', type:'tiroir-caisse'});
+    if(tl.type==='encastre' && !tl.cseule){
+      var facEp  = tl.fep==='même' ? ep : +tl.fep;
+      var facMat = tl.fmat==='même' ? rM(c.mat,ep) : tl.fmat;
+      var facAutoL = Math.round((largCaisse - tl.fje*(tl.nb-1))/tl.nb - tl.fjh*2);
+      var facAutoH = Math.round(tl.hcaisse - tl.fjh*2);
+      var fL = tl.facadeMan&&tl.fL>0 ? tl.fL : facAutoL;
+      var fH = tl.facadeMan&&tl.fH>0 ? tl.fH : facAutoH;
+      pieces.push({nom:label+' — Façade affleurante (×'+tl.nb+')', L:fL, H:fH, qte:tl.nb, mat:facMat, ep:facEp, chants:tl.chantFacade||[], decor:'', type:'tiroir-facade',
+        jd:'Jeu '+tl.fjh+'mm — Hettich 9073611 + plaque 9071595',
+        note:'Cromic II '+crom.longueur+'mm réf.'+crom.code});
+    }
+  });
+}
+
+
+function updateCoulisse(){
+  var prof=+(document.getElementById('c-enc-prof')||{value:0}).value||0;
+  var el=document.getElementById('c-enc-coulisse');
+  if(el) el.value=prof>0?(prof+' mm'):'';
+}
+
+function updateLargCaisse(){
+  var epCoul=+(document.getElementById('c-tir-epcoul')||{value:12.7}).value||12.7;
+  var L=+(document.getElementById('c-l')||{value:0}).value||0;
+  var ep=+(document.getElementById('c-ep')||{value:19}).value||19;
+  var largUtile=L-2*ep;
+  var largCaisse=Math.round(largUtile-2*epCoul);
+  var el=document.getElementById('c-tir-largcaisse');
+  if(el&&largCaisse>0) el.value=largCaisse+' mm  ('+largUtile+' - 2x'+epCoul+')';
+}
+
+function buildDecorSelect(){
+  var sel=document.getElementById('c-decor-select');
+  if(!sel) return;
+  sel.innerHTML='<option value="">— Catalogue EGGER Eurodekor —</option>';
+  Object.entries(EGGER_DECORS).forEach(function(entry){
+    var famille=entry[0], decors=entry[1];
+    var og=document.createElement('optgroup');
+    og.label=famille;
+    decors.forEach(function(d){
+      var opt=document.createElement('option');
+      opt.value=d.ref;
+      opt.textContent=d.ref+' — '+d.nom;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+  var sep=document.createElement('option');
+  sep.value='__libre__';
+  sep.textContent='Saisie libre (hors catalogue)';
+  sel.appendChild(sep);
+}
+
+function applyDecorSelect(){
+  var sel=document.getElementById('c-decor-select');
+  var input=document.getElementById('c-decor');
+  if(!sel||!input) return;
+  if(sel.value==='__libre__'){input.value='';input.focus();sel.value='';return;}
+  if(sel.value){input.value=sel.value;initChantsRef();}
+}
+
+function initChantsRef(){
+  var decor=(document.getElementById('c-decor')||{value:''}).value.trim();
+  var val='ABS 0,8mm'+(decor?' '+decor:'');
+  document.querySelectorAll('[data-auto-chant="1"]').forEach(function(el){
+    if(!el.value||el.value.startsWith('ABS 0,8mm')) el.value=val;
+  });
+}
+
+function updateCoulisseApp(){
+  const prof=+document.getElementById('c-app-prof')?.value||0;
+  const el=document.getElementById('c-app-coulisse');
+  if(el) el.value=prof>0?`${prof} mm`:'';
+}
+
+// ══════════════════════════════════════════════════════
+// DIMENSIONS MANUELLES
+// ══════════════════════════════════════════════════════
+function toggleMan(px){
+  const cb=document.getElementById(`c-${px}-man`);
+  const div=document.getElementById(`man-${px}`);
+  if(div) div.style.display=cb.checked?'block':'none';
+}
+function getManDims(px){
+  const cb=document.getElementById(`c-${px}-man`);
+  if(!cb||!cb.checked) return null;
+  const L=document.getElementById(`c-${px}-L`);
+  const l=document.getElementById(`c-${px}-l`);
+  return{L:L?+L.value||0:0, l:l?+l.value||0:0};
+}
+
+// ══════════════════════════════════════════════════════
+// FACE PICKER (grand, visuel — joue, tablette, porte)
+// ══════════════════════════════════════════════════════
+function buildFP(px){
+  const el=document.getElementById(`fp-${px}`);if(!el)return;
+  const faces=[
+    {id:'L1',lbl:'L1',col:'#1D9E75',top:true},{id:'L2',lbl:'L2',col:'#1D9E75',bot:true},
+    {id:'l1',lbl:'ℓ1',col:'#185FA5',left:true},{id:'l2',lbl:'ℓ2',col:'#185FA5',right:true},
+  ];
+  let h=`<div class="face-picker" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">`;
+  faces.forEach(f=>{
+    const W='3',N='0.5 stroke-dasharray="3,2"';
+    const st=f.top?`stroke="${f.col}" stroke-width="${W}"`:`stroke="#ddd" stroke-width="${N}"`;
+    const sb=f.bot?`stroke="${f.col}" stroke-width="${W}"`:`stroke="#ddd" stroke-width="${N}"`;
+    const sl=f.left?`stroke="${f.col}" stroke-width="${W}"`:`stroke="#ddd" stroke-width="${N}"`;
+    const sr=f.right?`stroke="${f.col}" stroke-width="${W}"`:`stroke="#ddd" stroke-width="${N}"`;
+    h+=`<div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <div onclick="togFP('${px}','${f.id}','${f.col}')" id="fpb-${px}-${f.id}" title="${f.id}" style="width:52px;height:52px;cursor:pointer;border-radius:8px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;position:relative">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <rect x="4" y="4" width="36" height="36" fill="none" stroke="#ddd" stroke-width="0.5" stroke-dasharray="3,2" rx="2"/>
+          <line x1="4" y1="4" x2="40" y2="4" ${st}/><line x1="4" y1="40" x2="40" y2="40" ${sb}/>
+          <line x1="4" y1="4" x2="4" y2="40" ${sl}/><line x1="40" y1="4" x2="40" y2="40" ${sr}/>
+          <text x="22" y="26" text-anchor="middle" font-size="11" fill="#1a1a1a" font-style="${f.id.startsWith('l')?'italic':'normal'}" font-weight="500">${f.lbl}</text>
+        </svg>
+        <div id="fpd-${px}-${f.id}" style="display:none;position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:${f.col}"></div>
+      </div>
+      <input type="checkbox" id="fpc-${px}-${f.id}" style="width:12px;height:12px;accent-color:${f.col}" onchange="syncFP('${px}','${f.id}','${f.col}')"/>
+    </div>`;
+  });
+  h+=`<div style="flex:1;min-width:110px"><label>Réf. chant</label><input type="text" id="fpr-${px}" placeholder="ex: ABS 0,8mm décor" style="height:28px;font-size:11px" data-auto-chant="1"/></div>`;
+  h+=`</div>`;
+  el.innerHTML=h;
+}
+function togFP(px,fid,col){const cb=document.getElementById(`fpc-${px}-${fid}`);cb.checked=!cb.checked;syncFP(px,fid,col);}
+function syncFP(px,fid,col){
+  const cb=document.getElementById(`fpc-${px}-${fid}`);
+  document.getElementById(`fpd-${px}-${fid}`).style.display=cb.checked?'block':'none';
+  document.getElementById(`fpb-${px}-${fid}`).style.border=cb.checked?`2px solid ${col}`:'1px solid #ddd';
+}
+function rdFP(px){
+  const f=[];
+  [['L1','Long sup.(L1)'],['L2','Long inf.(L2)'],['l1','Chant G (l1)'],['l2','Chant D (l2)']].forEach(([k,lbl])=>{
+    const cb=document.getElementById(`fpc-${px}-${k}`);
+    if(cb&&cb.checked){const ref=document.getElementById(`fpr-${px}`);f.push({id:k,face:lbl,ref:ref?ref.value.trim():''});}
+  });
+  return f;
+}
+
+// ══════════════════════════════════════════════════════
+// FACE PICKER MINI (fonds, plinthe)
+// ══════════════════════════════════════════════════════
+function buildFPmini(px){
+  const el=document.getElementById(`fp-${px}`);if(!el)return;
+  const faces=[
+    {id:'L1',lbl:'L1',col:'#1D9E75'},{id:'L2',lbl:'L2',col:'#1D9E75'},
+    {id:'l1',lbl:'ℓ1',col:'#185FA5'},{id:'l2',lbl:'ℓ2',col:'#185FA5'},
+  ];
+  let h=`<div class="fp-row">`;
+  faces.forEach(f=>{
+    h+=`<label style="display:flex;align-items:center;gap:3px;font-size:11px;cursor:pointer;white-space:nowrap">
+      <input type="checkbox" id="fpc-${px}-${f.id}" style="width:12px;height:12px;accent-color:${f.col}"/>
+      <span style="color:${f.col};font-weight:500;font-style:${f.id.startsWith('l')?'italic':'normal'}">${f.lbl}</span>
+    </label>`;
+  });
+  h+=`<input type="text" id="fpr-${px}" placeholder="ABS 0,8mm décor" data-auto-chant="1" style="height:26px;font-size:11px;flex:1;min-width:80px"/>`;
+  h+=`</div>`;
+  el.innerHTML=h;
+}
+function rdFPmini(px){
+  const f=[];
+  [['L1','Long sup.(L1)'],['L2','Long inf.(L2)'],['l1','Chant G (l1)'],['l2','Chant D (l2)']].forEach(([k,lbl])=>{
+    const cb=document.getElementById(`fpc-${px}-${k}`);
+    if(cb&&cb.checked){const ref=document.getElementById(`fpr-${px}`);f.push({id:k,face:lbl,ref:ref?ref.value.trim():''});}
+  });
+  return f;
+}
+function fmtC(ch){
+  if(!ch||!ch.length)return'—';
+  const byRef={};
+  ch.forEach(c=>{const r=c.ref||'(no ref)';if(!byRef[r])byRef[r]=[];byRef[r].push(c.id);});
+  return Object.entries(byRef).map(([r,ids])=>`<span style="color:${ids[0].startsWith('L')?'#1D9E75':'#185FA5'}">${ids.join('+')}${r!=='(no ref)'?`:${r}`:''}</span>`).join(' ');
+}
+
+// ══════════════════════════════════════════════════════
+// PIÈCES SUPPLÉMENTAIRES
+// ══════════════════════════════════════════════════════
+function addPieceSup(){
+  const idx=piecesSupIdx++;
+  const cont=document.getElementById('pieces-sup-list');
+  const div=document.createElement('div');
+  div.id=`ps-${idx}`;
+  div.style.cssText='background:#fff;border:1px solid #eee;border-radius:8px;padding:8px 10px;margin-bottom:6px';
+  div.innerHTML=`
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+      <span style="font-size:11px;font-weight:500;color:#888">Pièce libre ${idx+1}</span>
+      <button onclick="document.getElementById('ps-${idx}').remove()" class="btn-r" style="margin-left:auto;padding:2px 8px;font-size:10px">✕</button>
+    </div>
+    <div class="g6">
+      <div><label>Nom pièce</label><input id="ps-nom-${idx}" placeholder="ex: Joue retour"/></div>
+      <div><label>L mm</label><input id="ps-L-${idx}" type="number" placeholder="L"/></div>
+      <div><label>l mm</label><input id="ps-l-${idx}" type="number" placeholder="l"/></div>
+      <div><label>Matériau</label><select id="ps-mat-${idx}"><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option><option value="MDF brut">MDF brut</option><option value="HDF 5mm">HDF 5mm</option><option value="CTP">CTP</option></select></div>
+      <div><label>Ép. mm</label><select id="ps-ep-${idx}"><option value="19">19</option><option value="18">18</option><option value="22">22</option><option value="16">16</option><option value="10">10</option><option value="8">8</option><option value="5">5</option></select></div>
+      <div><label>Référence</label><input id="ps-ref-${idx}" placeholder="décor…"/></div>
+    </div>
+    <div style="margin-top:4px"><label>Chant(s)</label><div id="fp-ps-${idx}"></div></div>
+    <input type="hidden" id="ps-idx-${idx}" value="${idx}"/>`;
+  cont.appendChild(div);
+  buildFPmini(`ps-${idx}`);
+}
+
+function rdPiecesSup(){
+  const out=[];
+  document.querySelectorAll('[id^="ps-idx-"]').forEach(el=>{
+    const i=el.value;
+    const nom=document.getElementById(`ps-nom-${i}`)?.value?.trim()||`Pièce ${+i+1}`;
+    const L=+document.getElementById(`ps-L-${i}`)?.value||0;
+    const l=+document.getElementById(`ps-l-${i}`)?.value||0;
+    const mat=document.getElementById(`ps-mat-${i}`)?.value||'EGGER';
+    const ep=+document.getElementById(`ps-ep-${i}`)?.value||19;
+    const ref=document.getElementById(`ps-ref-${i}`)?.value||'';
+    const chants=rdFPmini(`ps-${i}`);
+    if(L>0&&l>0) out.push({nom,L,H:l,qte:1,mat:rM(mat,ep),ep,chants,decor:ref,type:'libre',manuel:true});
+  });
+  return out;
+}
+
+// ══════════════════════════════════════════════════════
+// SYSTÈME 32
+// ══════════════════════════════════════════════════════
+function cS32(H,P,ep,r1,r2,pas,series){
+  r1=+r1||37;r2=+r2||37;pas=+pas||32;series=+series||2;
+  const bb=15,bh=H-15;
+  const nb=Math.max(0,Math.floor((bh-bb)/pas)+1);
+  const oc=(nb-1)*pas,rest=(bh-bb)-oc,off=Math.round(rest/2);
+  const pt=Math.round(bb+off),dt=pt+(nb-1)*pas;
+  return{nb,pt,dt,posAv:r1,posAr:+P-r2,r1,r2,pas,series,delta:Math.abs(pt-(H-dt))};
+}
+function liveS32(){
+  const el=document.getElementById('s32-prev');if(!el)return;
+  if(usin!=='1f'&&usin!=='2f'){el.innerHTML='';return;}
+  const H=+document.getElementById('c-h').value||2200;
+  const P=+document.getElementById('c-p').value||580;
+  const ep=+document.getElementById('c-ep').value||19;
+  const r1=document.getElementById('c-r1').value,r2=document.getElementById('c-r2').value;
+  const pas=document.getElementById('c-pas').value;
+  const cremT2=document.getElementById('c-crem-type')?.value||'2f-avar';
+  const series=cremT2.endsWith('avar')?2:1;
+  const s=cS32(H,P,ep,r1,r2,pas,series);
+  const ok=s.delta<=1;
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+      <b style="font-size:12px">Sys 32/37 — crémaillère</b>
+      ${ok?'<span class="bdg bok">Symétrie OK</span>':`<span class="bdg bw">Δ=${s.delta}mm</span>`}
+      <span class="bdg bt">${
+        cremT2==='2f-avar'?'2 rangées — avant et arrière':
+        cremT2==='2f-av' ?'2 rangées — avant seulement':
+        cremT2==='1f-avar'?'1 rangée — avant et arrière':
+                           '1 rangée — avant seulement'
+      }</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:5px">
+      <div class="sc"><div class="sc-l">Trous / rangée</div><div class="sc-v">${s.nb}</div></div>
+      <div class="sc"><div class="sc-l">1er trou / bas brut</div><div class="sc-v">${s.pt} mm</div></div>
+      <div class="sc"><div class="sc-l">Dernier trou / bas</div><div class="sc-v">${s.dt} mm</div></div>
+      <div class="sc"><div class="sc-l">Marge bas / haut</div><div class="sc-v">${s.pt} / ${H-s.dt} mm</div></div>
+    </div>
+    <div style="font-size:11px;color:#555">
+      Av : axe à <b>${s.posAv}mm</b> du chant avant ·
+      ${series>=2?`Ar : axe à <b>${s.posAr}mm</b> du chant avant (=${s.r2}mm chant ar.) · `:''}
+      Pas ${s.pas}mm · Ø5mm · ${s.nb} trous · Départ depuis bas brut
+    </div>`;
+}
+['c-h','c-p','c-ep','c-r1','c-r2','c-pas','c-l','c-crem-type'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{liveS32();updateLargCaisse();});
+});
+
+// ══════════════════════════════════════════════════════
+// CALC PIÈCES
+// ══════════════════════════════════════════════════════
+function calcPieces(c){
+  const ep=+c.ep,L=+c.l,H=+c.h,P=+c.p,hpl=+c.hpl||100,rain=+c.rainure||10;
+  const fe=c.fondEp||5,fhe=c.fondHautEp||ep;
+  const fbMs=c.fbm==='même'?rM(c.mat,ep):c.fbm;
+  const fhMs=(c.fhm==='même struct.'||c.fhm==='même')?rM(c.mat,ep):c.fhm;
+  const plMs=c.plm==='même'?rM(c.mat,ep):c.plm;
+  const tbMt=c.tabm==='même'?c.mat:c.tabm,tbEp=c.tabep==='même'?ep:+c.tabep;
+  const tbMs=rM(tbMt,tbEp);
+  const ptMt=c.portm==='même'?c.mat:c.portm,ptEp=c.portep==='même'?ep:+c.portep;
+  const ptMs=rM(ptMt,ptEp);
+  const tirMt=c.tirm==='même'?c.mat:c.tirm,tirEp=c.tirep==='même'?ep:+c.tirep;
+  const tirMs=rM(tirMt,tirEp);
+  const matS=rM(c.mat,ep);
+  const jH=+c.jH||2,jB=+c.jB||2,jE=+c.jE||3,rec=+c.rec||0;
+  const nb=+c.tab||0,np=+c.nport||0;
+
+  // ─────────────────────────────────────────────────────
+  // COTES UTILES DU CAISSON
+  //
+  // Largeur utile  = L - 2×ép  (entre les deux joues)
+  // Profondeur utile = P - ép  (ext. - 1 joue arrière)
+  //   → la joue arrière donne la butée arrière intérieure
+  //   → pas de déduction de rainure ici : la profondeur
+  //     utile est la profondeur libre pour les pièces
+  //
+  // Tablettes, fond bas, fond haut :
+  //   L = largeur utile, l = profondeur utile
+  //
+  // Fond arrière :
+  //   L = largeur utile
+  //   H = hauteur utile (H ext - ép.fond haut - ép.fond bas)
+  // ─────────────────────────────────────────────────────
+  const largUtile = L - 2*ep;          // largeur entre joues
+  const profUtileInt = P - ep;          // profondeur utile (ext - 1 joue arrière)
+  const hautUtile = H - fhe - fe;       // hauteur utile intérieure
+
+  // Tablettes
+  const tabAutoL=largUtile, tabAutoH=profUtileInt;
+  const tabL=c.tabMan&&c.tabManL>0?c.tabManL:tabAutoL, tabH=c.tabMan&&c.tabManl>0?c.tabManl:tabAutoH;
+
+  // Fond haut et fond bas :
+  //   L = largeur tablette (= largeur utile = L - 2×ep) ✓
+  //   l = profondeur joue  (= P, profondeur extérieure du caisson)
+  //       la joue donne la profondeur totale, le fond l'occupe entièrement
+  const fhL=c.fhMan&&c.fhManL>0?c.fhManL:largUtile, fhH=c.fhMan&&c.fhManl>0?c.fhManl:P;
+  const fbL=c.fbMan&&c.fbManL>0?c.fbManL:largUtile, fbH=c.fbMan&&c.fbManl>0?c.fbManl:P;
+
+  // Fond arrière
+  // Fond arrière : L = H joue − hpl − ép.fond haut − ép.fond bas
+  //   recalculé selon épaisseurs réelles de la structure
+  const faHauteur=H-hpl-fhe-fe;
+  const faAutoL=faHauteur, faAutoH=largUtile;
+  const faL=c.faMan&&c.faManL>0?c.faManL:faAutoL, faH=c.faMan&&c.faManl>0?c.faManl:faAutoH;
+  const faMat=(c.fam==='même struct.'||c.fam==='même')?rM(c.mat,ep):c.fam||'HDF 5mm';
+  const faEp=c.faEp||5;
+
+  // Plinthe auto
+  const plAutoL=L-2*ep, plAutoH=hpl;
+  const plL=c.plMan&&c.plManL>0?c.plManL:plAutoL, plH=c.plMan&&c.plManl>0?c.plManl:plAutoH;
+
+  // Joues auto
+  const joueAutoL=H, joueAutoH=P;  // L=grand côté (hauteur), l=petit côté (profondeur)
+  const joueL=c.joueMan&&c.joueManL>0?c.joueManL:joueAutoL, joueH=c.joueMan&&c.joueManl>0?c.joueManl:joueAutoH;
+
+  // Portes auto
+  const portAutoL=np>0?Math.round((L-jE*(np-1)+2*rec)/np):0, portAutoH=H-hpl-jH-jB;
+  const portL=c.portMan&&c.portManL>0?c.portManL:portAutoL, portH=c.portMan&&c.portManl>0?c.portManl:portAutoH;
+
+  const cremT=c.cremType||'2f-avar';
+  const cremFaces=cremT.endsWith('avar')?2:1;  // avant seul=1, avant+arrière=2
+  const s32=(usin==='1f'||usin==='2f')?cS32(H,P,ep,c.r1,c.r2,c.pas,cremFaces):null;
+  const jd=`Jeu H${jH}/B${jB}/E${jE}mm${rec?` Rec${rec}mm`:''}`;
+
+  const pieces=[
+    {nom:'Joue latérale gauche (ext.)',L:joueL,H:joueH,qte:1,mat:matS,ep,chants:c.joueChants,decor:c.decor,type:'joue',s32,taq:c.taq,fil:c.fil,manuel:c.joueMan,cremType:cremT},
+    {nom:'Joue latérale droite (ext.)',L:joueL,H:joueH,qte:1,mat:matS,ep,chants:c.joueChants,decor:c.decor,type:'joue',s32,taq:c.taq,fil:c.fil,manuel:c.joueMan,cremType:cremT},
+    {nom:'Fond haut (tablette haute)',L:fhL,H:fhH,qte:1,mat:fhMs,ep:fhe,chants:c.fhChants,decor:c.fhd||c.decor,type:'fondhaut',manuel:c.fhMan},
+    {nom:'Fond bas',L:fbL,H:fbH,qte:1,mat:fbMs,ep:fe,chants:c.fbChants,decor:c.fbd,type:'fondbas',manuel:c.fbMan},
+    {nom:'Fond arrière',L:faL,H:faH,qte:1,mat:faMat,ep:faEp,chants:c.faChants||[],decor:c.fad||'',type:'fondarriere',manuel:c.faMan},
+    {nom:'Plinthe',L:plL,H:plH,qte:1,mat:plMs,ep,chants:c.plChants,decor:c.pld||c.decor,type:'plinthe',manuel:c.plMan},
+  ];
+
+  for(let i=1;i<=nb;i++){
+    pieces.push({nom:`Tablette ${i}`,L:tabL,H:tabH,qte:1,mat:tbMs,ep:tbEp,chants:c.tabChants,decor:c.tabd||c.decor,type:'tablette',manuel:c.tabMan});
+  }
+  if(np>0&&c.tport!=='Aucune'){
+    pieces.push({nom:`Porte (×${np}) — ${c.tport}`,L:portL,H:portH,qte:np,mat:ptMs,ep:ptEp,chants:c.portChants,decor:c.portd||c.decor,type:'porte',jd,manuel:c.portMan});
+  }
+
+  // Séparations verticales
+  calcSeps(c.sepLines||[], c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32, pieces);
+
+  // Tiroirs dynamiques
+  calcTiroirs(c.tiroirLines||[], c, ep, largUtile, +c.tirEpCoul||12.7, pieces);
+
+  // Pièces supplémentaires
+  (c.piecesSup||[]).forEach(p=>pieces.push(p));
+
+  return pieces;
+}
+
+// ══════════════════════════════════════════════════════
+// ADD CAISSON
+// ══════════════════════════════════════════════════════
+function addC(){
+  const nom=document.getElementById('c-nom').value.trim()||`C${String(caissons.length+1).padStart(2,'0')}`;
+  const qty=+document.getElementById('c-qty').value||1;
+  const ep=+document.getElementById('c-ep').value||19;
+  const fe=gEp(document.getElementById('c-fbm').value,ep)||5;
+  const fhe=gEp(document.getElementById('c-fhm').value,ep)||ep;
+  const jDims=(px)=>{const d=getManDims(px);return d?{[`${px}Man`]:true,[`${px}ManL`]:d.L,[`${px}Manl`]:d.l}:{[`${px}Man`]:false,[`${px}ManL`]:0,[`${px}Manl`]:0};};
+
+  const base={nom,qty,
+    l:document.getElementById('c-l').value,h:document.getElementById('c-h').value,p:document.getElementById('c-p').value,
+    mat:document.getElementById('c-mat').value,ep:String(ep),decor:document.getElementById('c-decor').value,
+    rainure:document.getElementById('c-rainure').value,hpl:document.getElementById('c-hpl').value,
+    fil:document.getElementById('c-fil').value,
+    joueChants:rdFP('joue'), ...jDims('joue'),
+    fbm:document.getElementById('c-fbm').value,fbd:document.getElementById('c-fbd').value,
+    fbChants:rdFPmini('fondbas'), ...jDims('fb'), fondEp:fe,
+    fhm:document.getElementById('c-fhm').value,fhd:document.getElementById('c-fhd').value,
+    fhChants:rdFPmini('fondhaut'), ...jDims('fh'), fondHautEp:fhe,
+    fam:document.getElementById('c-fam').value,
+    faEp:+document.getElementById('c-fa-ep').value||5,
+    fad:document.getElementById('c-fad').value,
+    faChants:rdFPmini('fondarriere'), ...jDims('fa'),
+    plm:document.getElementById('c-plm').value,pld:document.getElementById('c-pld').value,
+    plChants:rdFPmini('plinthe'), ...jDims('pl'),
+    usinage:usin,
+    cremType:document.getElementById('c-crem-type')?.value||'2f-avar',
+    r1:document.getElementById('c-r1')?document.getElementById('c-r1').value:'37',
+    r2:document.getElementById('c-r2')?document.getElementById('c-r2').value:'37',
+    pas:document.getElementById('c-pas')?document.getElementById('c-pas').value:'32',
+    taq:document.getElementById('c-taq')?document.getElementById('c-taq').value:'',
+    tab:document.getElementById('c-tab').value,tabm:document.getElementById('c-tabm').value,
+    tabep:document.getElementById('c-tabep').value,tabd:document.getElementById('c-tabd').value,
+    tabChants:rdFP('tab'), ...jDims('tab'),
+    nport:document.getElementById('c-nport').value,tport:document.getElementById('c-tport').value,
+    portm:document.getElementById('c-portm').value,portep:document.getElementById('c-portep').value,
+    portd:document.getElementById('c-portd').value,
+    portChants:rdFP('port'), ...jDims('port'),
+    jH:document.getElementById('c-jh').value,jB:document.getElementById('c-jb').value,
+    jE:document.getElementById('c-je').value,rec:document.getElementById('c-rec').value,
+    tirEpCoul:+document.getElementById('c-tir-epcoul')?.value||12.7,
+    tiroirLines:rdTiroirs(),
+    // Tiroirs dynamiques — lus via rdTiroirs()
+    notes:document.getElementById('c-notes').value,
+    sepLines:rdSeps(),
+    piecesSup:rdPiecesSup(),
+  };
+  for(let q=0;q<qty;q++){
+    const c=JSON.parse(JSON.stringify(base));
+    c.nom=qty>1?`${nom} (${q+1}/${qty})`:nom;c.qty=1;c.pieces=calcPieces(c);caissons.push(c);
+  }
+  document.getElementById('cnt').textContent=`${caissons.length} caisson(s)`;
+  rstRapide();
+}
+
+function rstForm(){
+  ['c-nom','c-notes','c-decor'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('c-l').value=600;document.getElementById('c-h').value=2200;
+  document.getElementById('c-p').value=580;document.getElementById('c-qty').value=1;
+  selU('aucun',document.querySelectorAll('.rc')[0]);
+  toggleTiroirs();liveS32();
+}
+function delC(i){caissons.splice(i,1);document.getElementById('cnt').textContent=`${caissons.length} caisson(s)`;rstRapide();if(document.getElementById('tab-liste').style.display!=='none')rstFull();}
+function dupC(i){const c=JSON.parse(JSON.stringify(caissons[i]));c.nom+=' (copie)';caissons.push(c);document.getElementById('cnt').textContent=`${caissons.length} caisson(s)`;rstRapide();}
+
+// ══════════════════════════════════════════════════════
+// RENDER RAPIDE (config tab)
+// ══════════════════════════════════════════════════════
+function rstRapide(){
+  const el=document.getElementById('lst-r');if(!caissons.length){el.innerHTML='';return;}
+  let h=`<div class="card"><div class="st">Caissons saisis</div>`;
+  caissons.forEach((c,i)=>{
+    const ms=rM(c.mat,c.ep),s32=c.pieces.find(p=>p.s32)?.s32;
+    const ntir=(c.tiroirLines||[]).reduce((a,t)=>a+(+t.nb||1),0);
+    h+=`<div style="display:flex;align-items:center;gap:6px;padding:7px 9px;background:#f8f8f6;border-radius:8px;margin-bottom:5px;flex-wrap:wrap">
+      <span style="font-weight:500;font-size:12px;min-width:120px">${c.nom}</span>
+      <span class="bdg bt">${c.l}×${c.h}×${c.p}</span>
+      <span class="pill ${pOf(ms)}">${ms}</span>
+      ${c.decor?`<span style="font-size:10px;color:#888">${c.decor}</span>`:''}
+      ${s32?`<span class="bdg bp">${c.usinage==='2f'?'Crém.2F':'Crém.1F'} · ${s32.nb}t · pas${s32.pas}mm</span>`:''}
+      ${ntir>0?`<span class="bdg bb">${ntir} tiroir(s)</span>`:''}
+      ${c.piecesSup?.length?`<span class="bdg ba">+${c.piecesSup.length} libre(s)</span>`:''}
+      ${c.notes?`<span style="font-size:10px;font-style:italic;color:#888">${c.notes}</span>`:''}
+      <button style="margin-left:auto;padding:2px 8px;font-size:10px" onclick="dupC(${i})">Dupliquer</button>
+      <button class="btn-r" style="padding:2px 8px;font-size:10px" onclick="delC(${i})">✕</button>
+    </div>`;
+  });
+  el.innerHTML=h+`</div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER FULL (onglet Caissons)
+// ══════════════════════════════════════════════════════
+function rowHtml(p,hasSys32){
+  const fm={};(p.chants||[]).forEach(ch=>fm[ch.id]=ch.ref||'✓');
+  let s32c='';
+  if(hasSys32){
+    if(p.s32&&p.type==='joue'){const sd=p.s32;s32c=`<td style="font-size:9px;line-height:1.6;min-width:180px">
+              <div style="font-weight:500;color:#3C3489">${sd.series===2?'Crémaillère 2 faces':'Crémaillère 1 face'}</div>
+              Ø 5 mm — pas ${sd.pas} mm — ${sd.nb} trous<br>
+              Premier trou : ${sd.pt} mm / Dernier trou : ${sd.dt} mm depuis le bas brut<br>
+              Série avant à ${sd.r1} mm du chant avant — Série arrière à ${sd.r2} mm du chant arrière<br>
+              Taquet : ${p.taq||'Non débouchant Ø 5 mm'}
+            </td>`;}
+    else if(p.type==='tablette')s32c='<td style="font-size:9px;color:#888">taquets</td>';
+    else s32c='<td></td>';
+  }
+  const manBdg=p.manuel?'<span class="bdg ba" style="font-size:8px;margin-left:3px">manuel</span>':'';
+  return`<tr>
+    <td style="font-weight:${p.type==='joue'?'500':'400'}">${p.nom}${manBdg}${p.jd?`<br><span style="font-size:9px;color:#888">${p.jd}</span>`:''} ${p.note?`<br><span style="font-size:9px;color:#185FA5">${p.note}</span>`:''}</td>
+    <td style="text-align:center">${p.qte}</td>
+    <td style="text-align:right;font-weight:500">${p.L}</td>
+    <td style="text-align:right;font-weight:500">${p.H}</td>
+    <td><span class="pill ${pOf(p.mat)}">${p.mat}</span></td>
+    <td style="color:#888">${p.ep}</td>
+    <td style="font-size:10px;color:#888">${p.decor||'—'}</td>
+    <td style="font-size:10px;color:${fm.L1?'#1D9E75':'#ccc'}">${fm.L1||'—'}</td>
+    <td style="font-size:10px;color:${fm.L2?'#1D9E75':'#ccc'}">${fm.L2||'—'}</td>
+    <td style="font-size:10px;color:${fm.l1?'#185FA5':'#ccc'}">${fm.l1||'—'}</td>
+    <td style="font-size:10px;color:${fm.l2?'#185FA5':'#ccc'}">${fm.l2||'—'}</td>
+    <td style="font-size:9px;color:#888">${p.fil?p.fil==='L'?'→L':'↓l':''}</td>
+    ${s32c}
+    <td style="text-align:right">${(p.L*p.H*p.qte/1e6).toFixed(4)}</td>
+  </tr>`;
+}
+
+function rstFull(){
+  const el=document.getElementById('lst-f');
+  if(!caissons.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:#888">Aucun caisson.</div>';return;}
+  let h='';
+  caissons.forEach((c,i)=>{
+    const ms=rM(c.mat,c.ep),s32=c.pieces.find(p=>p.s32)?.s32;
+    const hs=c.pieces.some(p=>p.s32&&p.type==='joue');
+    h+=`<div class="card">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:.5rem;flex-wrap:wrap">
+        <div style="flex-shrink:0">${drawCaisson(c)}</div>
+        <div style="flex:1;min-width:200px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:.5rem;flex-wrap:wrap">
+        <span style="font-weight:500;font-size:13px">${c.nom}</span>
+        <span class="bdg bt">${c.l}×${c.h}×${c.p} mm</span>
+        <span class="pill ${pOf(ms)}">${ms}</span>
+        ${s32?`<span class="bdg bp">${c.usinage==='2f'?'Crém.2F':'Crém.1F'} · ${s32.nb}t · réversible</span>`:''}
+        <button class="btn-r" style="margin-left:auto;padding:2px 8px;font-size:10px" onclick="delC(${i})">Supprimer</button>
+      </div>
+      <div style="overflow-x:auto"><table class="dt">
+        <thead><tr><th>Pièce</th><th>Qté</th><th>L mm</th><th>l mm</th><th>Mat.</th><th>Ép</th><th>Réf.</th>
+          <th style="color:#1D9E75">L1↑</th><th style="color:#1D9E75">L2↓</th>
+          <th style="color:#185FA5">l1←</th><th style="color:#185FA5">l2→</th>
+          <th>Fil</th>${hs?'<th style="min-width:210px">Crémaillère / Sys32 — Dispano</th>':''}<th>m²</th></tr></thead>
+        <tbody>${c.pieces.map(p=>rowHtml(p,hs)).join('')}</tbody>
+      </table></div>
+        </div>
+      </div>`;
+  });
+  el.innerHTML=h;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER DÉBIT
+// ══════════════════════════════════════════════════════
+function drawPiece(p){
+  const W=88, H=58; // canvas SVG
+  const MARG=14;    // marge pour cotes
+  const rW=W-2*MARG, rH=H-2*MARG; // rectangle pièce
+
+  // Ratio L/l pour proportionner le rectangle
+  const pL=p.L||1, pH=p.H||1;
+  const ratio=pL/pH;
+  let rw,rh;
+  if(ratio>=1){rw=rW;rh=Math.max(10,Math.round(rW/ratio));}
+  else{rh=rH;rw=Math.max(10,Math.round(rH*ratio));}
+  const ox=MARG+(rW-rw)/2, oy=MARG+(rH-rh)/2;
+
+  // Chants
+  const fm={};(p.chants||[]).forEach(ch=>fm[ch.id]=ch.ref||'oui');
+  const cL='#1D9E75', cl='#185FA5', cN='#e0e0e0';
+  const wChant=3;
+
+  // Fil : tirets horiz si L (horizontal), tirets vert si l (vertical)
+  const fil=p.fil||'L';
+  let filLines='';
+  if(fil==='L'){
+    // tirets horizontaux
+    for(let y=oy+8;y<oy+rh-4;y+=8){
+      filLines+=`<line x1="${ox+3}" y1="${y}" x2="${ox+rw-3}" y2="${y}" stroke="#ddd" stroke-width="0.6" stroke-dasharray="3,2"/>`;
+    }
+  } else {
+    // tirets verticaux
+    for(let x=ox+8;x<ox+rw-4;x+=8){
+      filLines+=`<line x1="${x}" y1="${oy+3}" x2="${x}" y2="${oy+rh-3}" stroke="#ddd" stroke-width="0.6" stroke-dasharray="3,2"/>`;
+    }
+  }
+
+  // Flèche cote L (en haut)
+  const arrowL=`<line x1="${ox}" y1="${oy-5}" x2="${ox+rw}" y2="${oy-5}" stroke="#555" stroke-width="0.7"/>
+    <line x1="${ox}" y1="${oy-8}" x2="${ox}" y2="${oy-2}" stroke="#555" stroke-width="0.7"/>
+    <line x1="${ox+rw}" y1="${oy-8}" x2="${ox+rw}" y2="${oy-2}" stroke="#555" stroke-width="0.7"/>
+    <text x="${ox+rw/2}" y="${oy-7}" text-anchor="middle" font-size="6" fill="#333">${pL}</text>`;
+  // Flèche cote l (à droite)
+  const arrowl=`<line x1="${ox+rw+5}" y1="${oy}" x2="${ox+rw+5}" y2="${oy+rh}" stroke="#555" stroke-width="0.7"/>
+    <line x1="${ox+rw+2}" y1="${oy}" x2="${ox+rw+8}" y2="${oy}" stroke="#555" stroke-width="0.7"/>
+    <line x1="${ox+rw+2}" y1="${oy+rh}" x2="${ox+rw+8}" y2="${oy+rh}" stroke="#555" stroke-width="0.7"/>
+    <text x="${ox+rw+10}" y="${oy+rh/2+2}" text-anchor="start" font-size="6" fill="#333">${pH}</text>`;
+
+  // Épaisseur en bas à gauche
+  const epTxt=`<text x="${ox+2}" y="${oy+rh-2}" font-size="5.5" fill="#888">ép.${p.ep}</text>`;
+
+  return `<svg width="${W+20}" height="${H+4}" viewBox="0 0 ${W+20} ${H+4}" xmlns="http://www.w3.org/2000/svg" style="display:block">
+    <!-- fond pièce -->
+    <rect x="${ox}" y="${oy}" width="${rw}" height="${rh}" fill="#fafaf8" stroke="#ccc" stroke-width="0.5"/>
+    <!-- fil du bois -->
+    ${filLines}
+    <!-- chants colorés -->
+    <line x1="${ox}" y1="${oy}" x2="${ox+rw}" y2="${oy}" stroke="${fm.L1?cL:cN}" stroke-width="${fm.L1?wChant:1}"/>
+    <line x1="${ox}" y1="${oy+rh}" x2="${ox+rw}" y2="${oy+rh}" stroke="${fm.L2?cL:cN}" stroke-width="${fm.L2?wChant:1}"/>
+    <line x1="${ox}" y1="${oy}" x2="${ox}" y2="${oy+rh}" stroke="${fm.l1?cl:cN}" stroke-width="${fm.l1?wChant:1}"/>
+    <line x1="${ox+rw}" y1="${oy}" x2="${ox+rw}" y2="${oy+rh}" stroke="${fm.l2?cl:cN}" stroke-width="${fm.l2?wChant:1}"/>
+    <!-- cotes -->
+    ${arrowL}
+    ${arrowl}
+    <!-- ép -->
+    ${epTxt}
+  </svg>`;
+}
+
+function renderDebit(){
+  if(!caissons.length){document.getElementById('stats').innerHTML='';document.getElementById('fiche').innerHTML='<div style="text-align:center;padding:2rem;color:#888">Aucun caisson.</div>';return;}
+  let tot=0,totS=0;const mM={};
+  caissons.forEach(c=>c.pieces.forEach(p=>{tot+=p.qte;const s=p.L*p.H*p.qte/1e6;totS+=s;const k=p.mat+(p.decor?`—${p.decor}`:'');if(!mM[k])mM[k]={mat:p.mat,decor:p.decor,surf:0};mM[k].surf+=s;}));
+  document.getElementById('stats').innerHTML=`
+    <div class="sc"><div class="sc-l">Caissons</div><div class="sc-v">${caissons.length}</div></div>
+    <div class="sc"><div class="sc-l">Pièces</div><div class="sc-v">${tot}</div></div>
+    <div class="sc"><div class="sc-l">Surface nette</div><div class="sc-v">${totS.toFixed(2)} m²</div></div>
+    <div class="sc"><div class="sc-l">Références mat.</div><div class="sc-v">${Object.keys(mM).length}</div></div>`;
+  const pM={};
+  caissons.forEach(c=>c.pieces.forEach(p=>{
+    const k=p.mat+(p.decor?`||${p.decor}`:'');
+    if(!pM[k])pM[k]={mat:p.mat,decor:p.decor,pieces:[]};
+    for(let q=0;q<p.qte;q++)pM[k].pieces.push({...p,qte:1,nom:p.qte>1?`${p.nom} (${q+1}/${p.qte})`:p.nom,_c:c.nom});
+  }));
+  const proj=document.getElementById('p-nom').value||'Projet';
+  const cli=document.getElementById('p-client').value,pos=document.getElementById('p-poseur').value;
+  const dt=document.getElementById('p-date').value,dev=document.getElementById('p-devis').value;
+  let h=`<div class="card" style="margin-bottom:.75rem">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div><div style="font-size:16px;font-weight:500">${proj}</div>
+        <div style="font-size:11px;color:#888;margin-top:2px">${cli?`Client:${cli} · `:''}${pos?`Poseur:${pos} · `:''}${dt}${dev?` · Réf.${dev}`:''}</div></div>
+      <div style="text-align:right;font-size:10px;color:#888"><div style="font-weight:500">FICHE DE DÉBIT PANNEAUX</div>
+        <div>Sys32 réversible · Chants L1/L2/l1/l2 · Sens fil</div></div>
+    </div>
+    <div class="sep"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:11px">
+      ${Object.entries(mM).map(([k,d])=>`<span><span class="pill ${pOf(d.mat)}">${d.mat}${d.decor?` — ${d.decor}`:''}</span> <b style="margin-left:4px">${d.surf.toFixed(3)} m²</b></span>`).join('')}
+    </div>
+  </div>`;
+  Object.entries(pM).forEach(([k,d])=>{
+    const s=d.pieces.reduce((a,p)=>a+p.L*p.H/1e6,0);
+    const hs=d.pieces.some(p=>p.s32&&p.type==='joue');
+    h+=`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;flex-wrap:wrap">
+      <span class="pill ${pOf(d.mat)}" style="font-size:11px;padding:3px 10px">${d.mat}</span>
+      ${d.decor?`<span style="font-size:11px;color:#888">${d.decor}</span>`:''}
+      <span class="bdg bt">${d.pieces.length} pièces · ${s.toFixed(3)} m²</span>
+    </div>
+    <div style="overflow-x:auto"><table class="dt">
+      <thead><tr><th>Dessin</th><th>#</th><th>Caisson</th><th>Pièce</th><th>Matériau</th><th>Référence / Décor</th><th>L mm</th><th>l mm</th><th>Ép</th>
+        <th style="color:#1D9E75">L1↑</th><th style="color:#1D9E75">L2↓</th>
+        <th style="color:#185FA5">l1←</th><th style="color:#185FA5">l2→</th>
+        <th>Fil</th>${hs?'<th style="min-width:210px">Crémaillère / Sys32 — Dispano</th>':''}<th>m²</th><th>✓</th></tr></thead>
+      <tbody>${d.pieces.map((p,i)=>{
+        const fm={};(p.chants||[]).forEach(ch=>fm[ch.id]=ch.ref||'✓');
+        let s32c='';
+        if(hs){
+          if(p.s32&&p.type==='joue'){
+            const sd=p.s32, symOk=sd.delta<=1;
+            s32c=`<td style="font-size:10px;line-height:1.9;min-width:240px;padding:5px 8px;vertical-align:top">
+              <div style="font-weight:600;color:#3C3489;font-size:11px;margin-bottom:4px;border-bottom:1px solid #e0defa;padding-bottom:3px">
+                Joue réversible G/D
+              </div>
+              <table style="border-collapse:collapse;font-size:10px;width:100%">
+                <tr>
+                  <td style="color:#666;padding:1px 10px 1px 0;width:50%">Type d'usinage</td>
+                  <td style="font-weight:500">Perçage crémaillère — diamètre Ø 5 mm</td>
+                </tr>
+                <tr>
+                  <td style="color:#666;padding:1px 10px 1px 0">Nombre de rangées</td>
+                  <td style="font-weight:500">${
+                    p.cremType==='2f-avar'?'2 rangées de trous — avant et arrière':
+                    p.cremType==='2f-av' ?'2 rangées de trous — avant seulement':
+                    p.cremType==='1f-avar'?'1 rangée de trous — avant et arrière':
+                                           '1 rangée de trous — avant seulement'
+                  } — depuis le chant long (L1)</td>
+                </tr>
+                <tr>
+                  <td style="color:#666;padding:1px 10px 1px 0">Pas de perçage</td>
+                  <td style="font-weight:500">${sd.pas} mm</td>
+                </tr>
+                <tr>
+                  <td style="color:#666;padding:1px 10px 1px 0">Cote axe rangée avant / chant avant</td>
+                  <td style="font-weight:500">${sd.r1} mm depuis le chant avant (l1)</td>
+                </tr>
+                ${sd.series===2?`<tr>
+                  <td style="color:#666;padding:1px 10px 1px 0">Cote axe rangée arrière / chant arrière</td>
+                  <td style="font-weight:500">${sd.r2} mm depuis le chant arrière (l2) &nbsp;<span style="color:#888;font-size:9px">(soit ${sd.posAr} mm depuis le chant avant)</span></td>
+                </tr>`:''}
+                <tr>
+                  <td style="color:#666;padding:1px 10px 1px 0">Type de taquet</td>
+                  <td style="font-weight:500">${p.taq||'Non débouchant Ø 5 mm'}</td>
+                </tr>
+                <tr>
+                  <td style="color:#666;padding:2px 10px 0 0">Symétrie haut / bas</td>
+                  <td style="font-weight:500;color:${symOk?'#1D9E75':'#c0392b'}">${symOk?'✓ Symétrie correcte':'⚠ Écart de '+sd.delta+' mm — à vérifier'}</td>
+                </tr>
+              </table>
+            </td>`;
+          }
+          else if(p.type==='tablette')s32c='<td style="font-size:9px;color:#888">taquets</td>';
+          else s32c='<td></td>';
+        }
+        const manBdg=p.manuel?'<span class="bdg ba" style="font-size:8px">manuel</span> ':'';
+        return`<tr>
+          <td style="padding:3px;vertical-align:middle">${drawPiece(p)}</td>
+          <td style="color:#aaa;font-size:10px">${String(i+1).padStart(2,'0')}</td>
+          <td style="font-size:11px">${p._c}</td>
+          <td>${manBdg}<span style="font-weight:${p.type==='joue'?'500':'400'}">${p.nom}</span>${p.jd?`<br><span style="font-size:9px;color:#888">${p.jd}</span>`:''} ${p.note?`<br><span style="font-size:9px;color:#185FA5">${p.note}</span>`:''}</td>
+          <td style="font-size:10px"><span class="pill ${pOf(p.mat)}">${p.mat}</span></td>
+          <td style="font-size:10px;color:#333;font-weight:500">${p.decor||'—'}</td>
+          <td style="text-align:right;font-weight:500">${p.L}</td>
+          <td style="text-align:right;font-weight:500">${p.H}</td>
+          <td style="color:#888">${p.ep}</td>
+          <td style="font-size:10px;color:${fm.L1?'#1D9E75':'#ccc'}">${fm.L1||'—'}</td>
+          <td style="font-size:10px;color:${fm.L2?'#1D9E75':'#ccc'}">${fm.L2||'—'}</td>
+          <td style="font-size:10px;color:${fm.l1?'#185FA5':'#ccc'}">${fm.l1||'—'}</td>
+          <td style="font-size:10px;color:${fm.l2?'#185FA5':'#ccc'}">${fm.l2||'—'}</td>
+          <td style="font-size:9px;color:#888">${p.fil?p.fil==='L'?'→L':'↓l':''}</td>
+          ${s32c}
+          <td style="text-align:right">${(p.L*p.H/1e6).toFixed(4)}</td>
+          <td style="text-align:center">□</td>
+        </tr>`;
+      }).join('')}
+      <tr style="background:#f8f8f6">
+        <td colspan="${hs?16:15}" style="text-align:right;font-size:10px;color:#888;font-weight:500">Total ${d.mat}</td>
+        <td style="text-align:right;font-weight:500">${s.toFixed(3)}</td><td></td>
+      </tr></tbody>
+    </table></div></div>`;
+  });
+  document.getElementById('fiche').innerHTML=h;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER CONSO
+// ══════════════════════════════════════════════════════
+function renderConso(){
+  const el=document.getElementById('conso');
+  if(!caissons.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:#888">Aucun caisson.</div>';return;}
+  const mM={},cM={},tM={},hettichMap={},couMap={};
+  caissons.forEach(c=>c.pieces.forEach(p=>{
+    const k=p.mat+(p.decor?`||${p.decor}`:'');
+    if(!mM[k])mM[k]={mat:p.mat,decor:p.decor,surf:0};mM[k].surf+=p.L*p.H*p.qte/1e6;
+    (p.chants||[]).forEach(ch=>{const ref=ch.ref||'(sans ref)';const dim=(ch.id==='L1'||ch.id==='L2')?p.L:p.H;if(!cM[ref])cM[ref]=0;cM[ref]+=dim*p.qte/1000;});
+    if(p.s32&&p.type==='joue'){const sd=p.s32,k2=`${p.taq||'Sys32'}||${sd.pas}`;if(!tM[k2])tM[k2]={taq:p.taq||'',pas:sd.pas,trous:0,series:sd.series};tM[k2].trous+=sd.nb*sd.series;}
+    // Hettich + coulisses
+    if(p.type==='tiroir-caisse'&&p.note&&p.note.includes('Hettich')){
+      const nTir=p.qte;
+      const m=p.note.match(/(\d+)mm/);const coulisseL=m?m[1]:'—';
+      const kh=`hettich`;if(!hettichMap[kh])hettichMap[kh]=0;hettichMap[kh]+=nTir;
+      const kc=`Cromic II ${coulisseL}mm`;if(!couMap[kc])couMap[kc]=0;couMap[kc]+=nTir;
+    }
+    if(p.type==='tiroir-facade'&&p.tirType==='encastre'){
+      const nTir=p.qte;const kh=`hettich`;if(!hettichMap[kh])hettichMap[kh]+=0;
+      const m=p.note?p.note.match(/(\d+)mm/):null;const coulisseL=m?m[1]:'—';
+      const kc=`Cromic II ${coulisseL}mm`;if(!couMap[kc])couMap[kc]=0;couMap[kc]+=nTir;
+      if(!hettichMap[kh])hettichMap[kh]=0;hettichMap[kh]+=nTir;
+    }
+  }));
+  const SP=2800*2070/1e6;
+  let h=`<div class="card"><div class="st">Consommation panneaux (280×207cm)</div>`;
+  Object.entries(mM).forEach(([k,d])=>{
+    const br=d.surf*1.15,nb=Math.ceil(br/SP);
+    h+=`<div style="display:flex;align-items:center;gap:8px;padding:8px;background:#f8f8f6;border-radius:8px;margin-bottom:6px;flex-wrap:wrap">
+      <span class="pill ${pOf(d.mat)}" style="font-size:11px;padding:3px 10px">${d.mat}</span>
+      ${d.decor?`<span style="font-size:11px;color:#888">${d.decor}</span>`:''}
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;flex:1;min-width:200px">
+        <div class="sc"><div class="sc-l">Surface nette</div><div style="font-size:13px;font-weight:500">${d.surf.toFixed(3)} m²</div></div>
+        <div class="sc"><div class="sc-l">+ 15% chutes</div><div style="font-size:13px;font-weight:500">${br.toFixed(3)} m²</div></div>
+        <div class="sc"><div class="sc-l">Panneaux à cder</div><div style="font-size:13px;font-weight:500">${nb} pl.</div></div>
+      </div>
+    </div>`;
+  });
+  if(Object.keys(cM).length){
+    h+=`<div class="sep"></div><div class="st">Chants — métrage par référence</div>`;
+    Object.entries(cM).forEach(([ref,ml])=>{h+=`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;flex-wrap:wrap"><span class="bdg bp">${ref}</span><b>${ml.toFixed(1)} ml</b><span style="color:#888">→ ${Math.ceil(ml/75)+1} rlx 75m</span></div>`;});
+  }
+  if(Object.keys(tM).length){
+    h+=`<div class="sep"></div><div class="st">Taquets système 32</div>`;
+    Object.entries(tM).forEach(([k,d])=>{const av=Math.ceil(d.trous*1.1);h+=`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;flex-wrap:wrap"><span class="bdg ba">${d.taq||'Sys32'} · pas ${d.pas}mm · ${d.series} série(s)</span><b>${d.trous} trous</b><span style="color:#888">→ commander ${d.trous} taquets (+10% = <b>${av}</b>)</span></div>`;});
+  }
+  // Hettich + Coulisses
+  const totalHettich=Object.values(hettichMap).reduce((a,b)=>a+b,0);
+  if(totalHettich>0){
+    h+=`<div class="sep"></div>
+    <div class="st">Quincaillerie tiroirs encastrés</div>
+    <div style="background:#E6F1FB;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:6px">
+      <div style="font-weight:500;color:#0C447C;margin-bottom:6px">Hettich</div>
+      <div>• Charnière <b>9073611</b> : <b>${totalHettich*2}</b> pièces (2 par tiroir)</div>
+      <div>• Plaque de montage <b>9071595</b> : <b>${totalHettich*2}</b> pièces (2 par tiroir)</div>
+    </div>
+    <div style="background:#E1F5EE;border-radius:8px;padding:10px 14px;font-size:12px">
+      <div style="font-weight:500;color:#085041;margin-bottom:6px">Coulisses Cromic II — billes télescopique sortie totale 45kg</div>
+      ${Object.entries(couMap).map(([k,n])=>`<div>• <b>${k}</b> : <b>${n}</b> paire(s)</div>`).join('')}
+    </div>`;
+  }
+  h+=`</div>`;
+  el.innerHTML=h;
+}
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION ONGLETS
+// ══════════════════════════════════════════════════════
+function printDebit(){ printTab('debit'); }
+
+function printTab(tab){
+  // Générer le contenu si nécessaire
+  if(tab==='debit') renderDebit();
+  else if(tab==='liste') rstFull();
+  else if(tab==='conso') renderConso();
+
+  // Mémoriser l'onglet actif
+  const tabs = ['config','liste','debit','conso'];
+  const wasVisible = {};
+  tabs.forEach(id => {
+    wasVisible[id] = document.getElementById('tab-'+id).style.display;
+  });
+
+  // Masquer tout sauf l'onglet à imprimer
+  tabs.forEach(id => {
+    document.getElementById('tab-'+id).style.display = (id===tab)?'block':'none';
+  });
+
+  // Stocker l'onglet en cours pour le CSS
+  document.body.setAttribute('data-print-tab', tab);
+
+  setTimeout(()=>{
+    window.print();
+    // Restaurer après impression
+    setTimeout(()=>{
+      tabs.forEach(id => {
+        document.getElementById('tab-'+id).style.display = wasVisible[id];
+      });
+      document.body.removeAttribute('data-print-tab');
+    }, 500);
+  }, 300);
+}
+
+// ══════════════════════════════════════════════════════════
+// GESTION DES PROJETS — Supabase (base de données en ligne)
+// ══════════════════════════════════════════════════════════
+var SB_URL = 'https://atdduwcjsjdpadclecxc.supabase.co';
+var SB_KEY = 'sb_publishable_iA3rMRjcRhWK12rrBPLL1g_BXtCno2H';
+var currentProjectId = null;
+var currentProjectName = '';
+var projets = {};  // cache session
+
+function sbHeaders(){
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Prefer': 'return=representation'
+  };
+}
+
+function setStatus(msg, color){
+  var s = document.getElementById('proj-status');
+  if(s){ s.textContent = msg; s.style.color = color||'#888'; }
+  if(msg) setTimeout(function(){ if(s) s.textContent=''; }, 6000);
+}
+
+function setDbDot(ok){
+  var dot = document.getElementById('db-status');
+  if(dot) dot.style.background = ok ? '#1D9E75' : '#e74c3c';
+}
+
+// Charger la liste des projets depuis Supabase
+async function refreshProjectList(selectId){
+  try{
+    var r = await fetch(SB_URL+'/rest/v1/projets?select=id,nom,client,updated_at&order=updated_at.desc', {
+      headers: sbHeaders()
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var data = await r.json();
+    setDbDot(true);
+    var sel = document.getElementById('proj-list');
+    sel.innerHTML = '<option value="">— Sélectionner un projet —</option>';
+    data.forEach(function(p){
+      var opt = document.createElement('option');
+      opt.value = p.id;
+      var date = p.updated_at ? new Date(p.updated_at).toLocaleDateString('fr-FR') : '';
+      opt.textContent = p.nom + (p.client?' — '+p.client:'') + (date?' ('+date+')':'');
+      if(p.id === selectId) opt.selected = true;
+      sel.appendChild(opt);
+      projets[p.id] = p;
+    });
+    setStatus('✓ '+data.length+' projet(s) en base', '#1D9E75');
+  } catch(e){
+    setDbDot(false);
+    setStatus('⚠ Connexion base impossible: '+e.message, '#e74c3c');
+  }
+}
+
+function buildData(){
+  return {
+    nom:    (document.getElementById('p-nom')||{}).value||'Sans nom',
+    client: (document.getElementById('p-client')||{}).value||'',
+    data:   {
+      version: 7,
+      savedAt: new Date().toISOString(),
+      projet:{
+        nom:    (document.getElementById('p-nom')||{}).value||'',
+        client: (document.getElementById('p-client')||{}).value||'',
+        poseur: (document.getElementById('p-poseur')||{}).value||'',
+        date:   (document.getElementById('p-date')||{}).value||'',
+        devis:  (document.getElementById('p-devis')||{}).value||'',
+        notes:  (document.getElementById('p-notes-proj')||{}).value||''
+      },
+      caissons: caissons
+    }
+  };
+}
+
+function applyData(data){
+  var p = data.projet||data;
+  if(p.nom)    document.getElementById('p-nom').value    = p.nom;
+  if(p.client) document.getElementById('p-client').value = p.client;
+  if(p.poseur) document.getElementById('p-poseur').value = p.poseur;
+  if(p.date)   document.getElementById('p-date').value   = p.date;
+  if(p.devis)  document.getElementById('p-devis').value  = p.devis;
+  if(p.notes)  document.getElementById('p-notes-proj').value = p.notes;
+  caissons = data.caissons||[];
+  document.getElementById('cnt').textContent = caissons.length+' caisson(s)';
+  rstRapide();
+}
+
+async function saveProject(){
+  if(!currentProjectId){ saveProjectAs(); return; }
+  var body = buildData();
+  try{
+    setStatus('Sauvegarde...','#888');
+    var r = await fetch(SB_URL+'/rest/v1/projets?id=eq.'+currentProjectId, {
+      method:'PATCH', headers:sbHeaders(),
+      body: JSON.stringify({nom:body.nom,client:body.client,data:body.data,updated_at:new Date().toISOString()})
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    await refreshProjectList(currentProjectId);
+    setStatus('✓ Projet "'+body.nom+'" sauvegardé en base', '#1D9E75');
+  } catch(e){ setStatus('⚠ Erreur: '+e.message,'#e74c3c'); }
+}
+
+async function saveProjectAs(){
+  var defaut = currentProjectName || (document.getElementById('p-nom')||{}).value || 'Mon dressing';
+  var name = prompt('Nom du projet:', defaut);
+  if(!name||!name.trim()) return;
+  var body = buildData();
+  body.nom = name.trim();
+  try{
+    setStatus('Création...','#888');
+    var r = await fetch(SB_URL+'/rest/v1/projets', {
+      method:'POST', headers:sbHeaders(),
+      body: JSON.stringify(body)
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var data = await r.json();
+    currentProjectId = data[0].id;
+    currentProjectName = name.trim();
+    await refreshProjectList(currentProjectId);
+    setStatus('✓ Projet "'+name+'" créé en base', '#1D9E75');
+  } catch(e){ setStatus('⚠ Erreur: '+e.message,'#e74c3c'); }
+}
+
+async function loadProjectFromSelect(){
+  var id = document.getElementById('proj-list').value;
+  if(!id) return;
+  try{
+    setStatus('Chargement...','#888');
+    var r = await fetch(SB_URL+'/rest/v1/projets?id=eq.'+id+'&select=*', {headers:sbHeaders()});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var rows = await r.json();
+    if(!rows.length){ setStatus('Projet introuvable','#e74c3c'); return; }
+    var row = rows[0];
+    currentProjectId = row.id;
+    currentProjectName = row.nom;
+    applyData(row.data.projet||row.data);
+    if(row.data.caissons) caissons = row.data.caissons;
+    document.getElementById('cnt').textContent = caissons.length+' caisson(s)';
+    rstRapide();
+    setStatus('✓ "'+row.nom+'" chargé — '+caissons.length+' caisson(s)', '#185FA5');
+  } catch(e){ setStatus('⚠ '+e.message,'#e74c3c'); }
+}
+
+async function deleteProject(){
+  var id = document.getElementById('proj-list').value;
+  if(!id){ setStatus('Sélectionnez un projet','#e74c3c'); return; }
+  var nom = projets[id]&&projets[id].nom ? projets[id].nom : 'ce projet';
+  if(!confirm('Supprimer "'+nom+'" définitivement ?')) return;
+  try{
+    var r = await fetch(SB_URL+'/rest/v1/projets?id=eq.'+id, {method:'DELETE',headers:sbHeaders()});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    if(currentProjectId===id){ currentProjectId=null; currentProjectName=''; }
+    await refreshProjectList(null);
+    setStatus('🗑 "'+nom+'" supprimé','#888');
+  } catch(e){ setStatus('⚠ '+e.message,'#e74c3c'); }
+}
+
+function newProject(){
+  if(caissons.length>0 && !confirm('Nouveau projet ? Les modifications non sauvegardées seront perdues.')) return;
+  caissons=[]; currentProjectId=null; currentProjectName='';
+  document.getElementById('cnt').textContent='0 caisson(s)';
+  ['p-nom','p-client','p-poseur','p-devis','p-notes-proj'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  var d=document.getElementById('p-date'); if(d) d.value=new Date().toISOString().split('T')[0];
+  var n=document.getElementById('p-nom'); if(n) n.value='Dressing sur mesure';
+  rstRapide();
+  document.getElementById('proj-list').value='';
+  setStatus('');
+}
+
+// Export/Import JSON local (backup)
+function exportJSON(){
+  var body = buildData();
+  var blob = new Blob([JSON.stringify(body.data,null,2)],{type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'dressing_'+(body.nom||'export').replace(/[^a-z0-9_-]/gi,'_')+'_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  setStatus('✓ Fichier JSON exporté localement','#1D9E75');
+}
+
+function importJSON(event){
+  var file=event.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.caissons) throw new Error('Format invalide');
+      applyData(data.projet||data);
+      if(data.caissons) caissons=data.caissons;
+      document.getElementById('cnt').textContent=caissons.length+' caisson(s)';
+      rstRapide();
+      setStatus('✓ Importé localement — cliquez Sauvegarder pour l\'envoyer en base','#185FA5');
+    } catch(err){ setStatus('⚠ '+err.message,'#e74c3c'); }
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
+
+// Auto-save toutes les 3 minutes
+setInterval(async function(){
+  if(currentProjectId && caissons.length>0) await saveProject();
+}, 180000);
+
+// Raccourci Ctrl+S
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey||e.metaKey) && e.key==='s'){
+    e.preventDefault();
+    saveProject();
+  }
+});
+
+// ── INITIALISATION ──
+(function init(){
+  // Pré-remplir la date
+  var d = document.getElementById('p-date');
+  if(d && !d.value) d.value = new Date().toISOString().split('T')[0];
+  // Construire le catalogue décors EGGER
+  buildDecorSelect();
+  // Pré-remplir les chants
+  initChantsRef();
+  // Largeur caisse tiroir
+  updateLargCaisse();
+  // Sys32 preview
+  liveS32();
+  // Charger la liste des projets depuis Supabase
+  refreshProjectList(null);
+})();
+</script>
+</body>
+</html>
