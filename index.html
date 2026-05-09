@@ -1192,7 +1192,8 @@ function editC(i){
     btn.textContent = '✏️ Mettre à jour ce caisson';
     btn.style.background = '#e6a800';
     btn.style.color = '#fff';
-    btn.onclick = function(){ updateC(); };
+    btn.setAttribute('data-edit-btn','1');
+    btn.setAttribute('onclick','updateC()');
   }
   // Notification
   var s = document.getElementById('lst-r');
@@ -1204,75 +1205,35 @@ var editingIndex = -1;
 
 function updateC(){
   if(editingIndex < 0){ addC(); return; }
-  // Sauvegarder l'ancien puis recréer
-  var newC = buildCaisson();
-  if(!newC) return;
-  caissons[editingIndex] = newC;
+  // Supprimer l'ancien caisson
+  caissons.splice(editingIndex, 1);
+  // Reconstruire via addC qui pousse dans caissons[]
+  // Mais on veut l'insérer à la même position
+  // Trick: sauvegarder le reste, vider, reconstruire
+  var avant = caissons.slice(0, editingIndex);
+  var apres = caissons.slice(editingIndex);
+  // Appeler addC pour construire le nouveau caisson
+  var lenBefore = caissons.length;
+  caissons = avant;
+  addC();  // pousse le nouveau caisson à la fin de 'avant'
+  caissons = caissons.concat(apres);
   editingIndex = -1;
   // Remettre le bouton Ajouter
-  var btn = document.querySelector('button[onclick*="updateC"]')||document.querySelector('button[onclick*="addC"]');
-  if(btn){
-    btn.textContent = '+ Ajouter ce caisson';
-    btn.style.background = '';
-    btn.style.color = '';
-    btn.onclick = function(){ addC(); };
+  var btnEl = document.querySelector('[data-edit-btn="1"]');
+  if(btnEl){
+    btnEl.textContent = '+ Ajouter ce caisson';
+    btnEl.style.background = '';
+    btnEl.style.color = '';
+    btnEl.removeAttribute('data-edit-btn');
+    btnEl.setAttribute('onclick','addC()');
   }
   document.getElementById('proj-status').textContent = '✓ Caisson mis à jour';
   document.getElementById('proj-status').style.color = '#1D9E75';
+  document.getElementById('cnt').textContent = caissons.length+' caisson(s)';
   rstRapide();
   renderDebit();
 }
 
-function buildCaisson(){
-  // Même logique que addC mais retourne l'objet sans pousser dans caissons
-  var nom = document.getElementById('c-nom')?.value?.trim();
-  if(!nom){ alert('Donnez un nom au caisson'); return null; }
-  var c = {
-    nom, qty:+document.getElementById('c-qty')?.value||1,
-    mat:document.getElementById('c-mat')?.value,
-    ep:+document.getElementById('c-ep')?.value,
-    l:+document.getElementById('c-l')?.value,
-    h:+document.getElementById('c-h')?.value,
-    p:+document.getElementById('c-p')?.value,
-    decor:document.getElementById('c-decor')?.value||'',
-    hpl:+document.getElementById('c-hpl')?.value||100,
-    rainure:+document.getElementById('c-rainure')?.value||10,
-    notes:document.getElementById('c-notes')?.value||'',
-    taq:document.getElementById('c-taq')?.value||'Non débouchant Ø5mm',
-    usinage:usin, cremType:document.getElementById('c-crem-type')?.value||'2f-avar',
-    r1:document.getElementById('c-r1')?.value||'37',
-    r2:document.getElementById('c-r2')?.value||'37',
-    pas:document.getElementById('c-pas')?.value||'32',
-    fil:document.querySelector('.rf.sel')?.dataset?.v||'L',
-    tab:document.getElementById('c-tab')?.value||0,
-    tabm:document.getElementById('c-tabm')?.value||'même',
-    tabep:document.getElementById('c-tabep')?.value||'même',
-    tabd:document.getElementById('c-tabd')?.value||'',
-    tabChants:rdFP('tab'), ...jDims('tab'),
-    nport:document.getElementById('c-nport')?.value||0,
-    tport:document.getElementById('c-tport')?.value||'Battante',
-    portm:document.getElementById('c-portm')?.value||'même',
-    portep:document.getElementById('c-portep')?.value||'même',
-    portd:document.getElementById('c-portd')?.value||'',
-    portChants:rdFP('port'), ...jDims('port'),
-    tirEpCoul:+document.getElementById('c-tir-epcoul')?.value||12.7,
-    tiroirLines:rdTiroirs(),
-    sepLines:rdSeps(),
-    joueChants:rdFP('joue'), joueMan:document.getElementById('c-joue-man')?.checked||false, ...jDims('joue'),
-    fhm:document.getElementById('c-fhm')?.value||'même', fondHautEp:+document.getElementById('c-fhep')?.value||19,
-    fhChants:rdFP('fh'), fhd:document.getElementById('c-fhd')?.value||'', fhMan:document.getElementById('c-fh-man')?.checked||false, ...jDims('fh'),
-    fbm:document.getElementById('c-fbm')?.value||'HDF 5mm', fondEp:+document.getElementById('c-fbep')?.value||5,
-    fbChants:rdFP('fb'), fbd:document.getElementById('c-fbd')?.value||'', fbMan:document.getElementById('c-fb-man')?.checked||false, ...jDims('fb'),
-    fam:document.getElementById('c-fam')?.value||'même', faChants:rdFP('fa'), fad:document.getElementById('c-fad')?.value||'', faMan:document.getElementById('c-fa-man')?.checked||false, ...jDims('fa'),
-    plm:document.getElementById('c-plm')?.value||'même', pld:document.getElementById('c-pld')?.value||'',
-    plChants:rdFPmini('plinthe'), ...jDims('pl'),
-    jH:document.getElementById('c-jH')?.value||2, jB:document.getElementById('c-jB')?.value||2, jE:document.getElementById('c-jE')?.value||3,
-    rec:document.getElementById('c-rec')?.value||0,
-    piecesSup:rdPiecesSup(),
-  };
-  c.pieces = calcPieces(c);
-  return c;
-}
 
 function dupC(i){const c=JSON.parse(JSON.stringify(caissons[i]));c.nom+=' (copie)';caissons.push(c);document.getElementById('cnt').textContent=`${caissons.length} caisson(s)`;rstRapide();}
 
