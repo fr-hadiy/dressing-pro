@@ -1143,6 +1143,137 @@ function rstForm(){
   toggleTiroirs();liveS32();
 }
 function delC(i){caissons.splice(i,1);document.getElementById('cnt').textContent=`${caissons.length} caisson(s)`;rstRapide();if(document.getElementById('tab-liste').style.display!=='none')rstFull();}
+function editC(i){
+  var c = caissons[i];
+  if(!c) return;
+  // Mémoriser l'index en cours d'édition
+  editingIndex = i;
+  // Remplir le formulaire avec les données du caisson
+  document.getElementById('c-nom').value = c.nom||'';
+  document.getElementById('c-qty').value = c.qty||1;
+  document.getElementById('c-mat').value = c.mat||'EGGER';
+  document.getElementById('c-ep').value  = c.ep||19;
+  document.getElementById('c-l').value   = c.l||600;
+  document.getElementById('c-h').value   = c.h||2200;
+  document.getElementById('c-p').value   = c.p||580;
+  document.getElementById('c-decor').value = c.decor||'';
+  document.getElementById('c-hpl').value = c.hpl||100;
+  document.getElementById('c-rainure').value = c.rainure||10;
+  document.getElementById('c-notes').value = c.notes||'';
+  document.getElementById('c-taq').value = c.taq||'Non débouchant Ø5mm';
+  document.getElementById('c-tir-epcoul').value = c.tirEpCoul||12.7;
+  // Fil
+  if(c.fil) selFil(c.fil, document.querySelector('.rf.sel')||document.querySelectorAll('.rf')[0]);
+  // Usinage
+  var uEl = document.querySelector('.rc.sel');
+  if(c.usinage) selU(c.usinage, document.querySelector('.rc[onclick*="'+c.usinage+'"]')||document.querySelectorAll('.rc')[0]);
+  // Crémaillère
+  if(c.cremType && document.getElementById('c-crem-type'))
+    document.getElementById('c-crem-type').value = c.cremType;
+  if(c.r1) document.getElementById('c-r1').value = c.r1;
+  if(c.r2) document.getElementById('c-r2').value = c.r2;
+  if(c.pas) document.getElementById('c-pas').value = c.pas;
+  // Tablettes
+  if(document.getElementById('c-tab'))   document.getElementById('c-tab').value   = c.tab||0;
+  if(document.getElementById('c-tabep')) document.getElementById('c-tabep').value = c.tabep||'même';
+  if(document.getElementById('c-tabd'))  document.getElementById('c-tabd').value  = c.tabd||'';
+  // Portes
+  if(document.getElementById('c-nport')) document.getElementById('c-nport').value = c.nport||0;
+  if(document.getElementById('c-tport')) document.getElementById('c-tport').value = c.tport||'Battante';
+  if(document.getElementById('c-portep')) document.getElementById('c-portep').value = c.portep||'même';
+  // Mettre à jour les affichages
+  updateLargCaisse();
+  liveS32();
+  // Aller sur l'onglet config
+  showTab('config');
+  // Changer le bouton Ajouter en Mettre à jour
+  var btn = document.querySelector('button[onclick="addC()"]');
+  if(btn){
+    btn.textContent = '✏️ Mettre à jour ce caisson';
+    btn.style.background = '#e6a800';
+    btn.style.color = '#fff';
+    btn.onclick = function(){ updateC(); };
+  }
+  // Notification
+  var s = document.getElementById('lst-r');
+  document.getElementById('proj-status').textContent = '✏️ Modification du caisson "'+c.nom+'" — modifiez puis cliquez Mettre à jour';
+  document.getElementById('proj-status').style.color = '#996600';
+}
+
+var editingIndex = -1;
+
+function updateC(){
+  if(editingIndex < 0){ addC(); return; }
+  // Sauvegarder l'ancien puis recréer
+  var newC = buildCaisson();
+  if(!newC) return;
+  caissons[editingIndex] = newC;
+  editingIndex = -1;
+  // Remettre le bouton Ajouter
+  var btn = document.querySelector('button[onclick*="updateC"]')||document.querySelector('button[onclick*="addC"]');
+  if(btn){
+    btn.textContent = '+ Ajouter ce caisson';
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.onclick = function(){ addC(); };
+  }
+  document.getElementById('proj-status').textContent = '✓ Caisson mis à jour';
+  document.getElementById('proj-status').style.color = '#1D9E75';
+  rstRapide();
+  renderDebit();
+}
+
+function buildCaisson(){
+  // Même logique que addC mais retourne l'objet sans pousser dans caissons
+  var nom = document.getElementById('c-nom')?.value?.trim();
+  if(!nom){ alert('Donnez un nom au caisson'); return null; }
+  var c = {
+    nom, qty:+document.getElementById('c-qty')?.value||1,
+    mat:document.getElementById('c-mat')?.value,
+    ep:+document.getElementById('c-ep')?.value,
+    l:+document.getElementById('c-l')?.value,
+    h:+document.getElementById('c-h')?.value,
+    p:+document.getElementById('c-p')?.value,
+    decor:document.getElementById('c-decor')?.value||'',
+    hpl:+document.getElementById('c-hpl')?.value||100,
+    rainure:+document.getElementById('c-rainure')?.value||10,
+    notes:document.getElementById('c-notes')?.value||'',
+    taq:document.getElementById('c-taq')?.value||'Non débouchant Ø5mm',
+    usinage:usin, cremType:document.getElementById('c-crem-type')?.value||'2f-avar',
+    r1:document.getElementById('c-r1')?.value||'37',
+    r2:document.getElementById('c-r2')?.value||'37',
+    pas:document.getElementById('c-pas')?.value||'32',
+    fil:document.querySelector('.rf.sel')?.dataset?.v||'L',
+    tab:document.getElementById('c-tab')?.value||0,
+    tabm:document.getElementById('c-tabm')?.value||'même',
+    tabep:document.getElementById('c-tabep')?.value||'même',
+    tabd:document.getElementById('c-tabd')?.value||'',
+    tabChants:rdFP('tab'), ...jDims('tab'),
+    nport:document.getElementById('c-nport')?.value||0,
+    tport:document.getElementById('c-tport')?.value||'Battante',
+    portm:document.getElementById('c-portm')?.value||'même',
+    portep:document.getElementById('c-portep')?.value||'même',
+    portd:document.getElementById('c-portd')?.value||'',
+    portChants:rdFP('port'), ...jDims('port'),
+    tirEpCoul:+document.getElementById('c-tir-epcoul')?.value||12.7,
+    tiroirLines:rdTiroirs(),
+    sepLines:rdSeps(),
+    joueChants:rdFP('joue'), joueMan:document.getElementById('c-joue-man')?.checked||false, ...jDims('joue'),
+    fhm:document.getElementById('c-fhm')?.value||'même', fondHautEp:+document.getElementById('c-fhep')?.value||19,
+    fhChants:rdFP('fh'), fhd:document.getElementById('c-fhd')?.value||'', fhMan:document.getElementById('c-fh-man')?.checked||false, ...jDims('fh'),
+    fbm:document.getElementById('c-fbm')?.value||'HDF 5mm', fondEp:+document.getElementById('c-fbep')?.value||5,
+    fbChants:rdFP('fb'), fbd:document.getElementById('c-fbd')?.value||'', fbMan:document.getElementById('c-fb-man')?.checked||false, ...jDims('fb'),
+    fam:document.getElementById('c-fam')?.value||'même', faChants:rdFP('fa'), fad:document.getElementById('c-fad')?.value||'', faMan:document.getElementById('c-fa-man')?.checked||false, ...jDims('fa'),
+    plm:document.getElementById('c-plm')?.value||'même', pld:document.getElementById('c-pld')?.value||'',
+    plChants:rdFPmini('plinthe'), ...jDims('pl'),
+    jH:document.getElementById('c-jH')?.value||2, jB:document.getElementById('c-jB')?.value||2, jE:document.getElementById('c-jE')?.value||3,
+    rec:document.getElementById('c-rec')?.value||0,
+    piecesSup:rdPiecesSup(),
+  };
+  c.pieces = calcPieces(c);
+  return c;
+}
+
 function dupC(i){const c=JSON.parse(JSON.stringify(caissons[i]));c.nom+=' (copie)';caissons.push(c);document.getElementById('cnt').textContent=`${caissons.length} caisson(s)`;rstRapide();}
 
 // ══════════════════════════════════════════════════════
@@ -1163,7 +1294,8 @@ function rstRapide(){
       ${ntir>0?`<span class="bdg bb">${ntir} tiroir(s)</span>`:''}
       ${c.piecesSup?.length?`<span class="bdg ba">+${c.piecesSup.length} libre(s)</span>`:''}
       ${c.notes?`<span style="font-size:10px;font-style:italic;color:#888">${c.notes}</span>`:''}
-      <button style="margin-left:auto;padding:2px 8px;font-size:10px" onclick="dupC(${i})">Dupliquer</button>
+      <button style="margin-left:auto;padding:2px 8px;font-size:10px;background:#fff8e6;border-color:#e6a800;color:#996600" onclick="editC(${i})">✏️ Modifier</button>
+      <button style="padding:2px 8px;font-size:10px" onclick="dupC(${i})">Dupliquer</button>
       <button class="btn-r" style="padding:2px 8px;font-size:10px" onclick="delC(${i})">✕</button>
     </div>`;
   });
