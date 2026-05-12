@@ -1762,7 +1762,8 @@ function calcPieces(c){
   // Fond arrière : L = H joue − hpl − ép.tablette haute − ép.tablette basse
   //   recalculé selon épaisseurs réelles de la structure
   // Fond arrière APPLIQUE TOTALE sur joues → l = L extérieur
-  const faHauteur=H-hpl-fhe-fe;
+  // Fond arrière : hauteur = hauteur joues (H)
+  const faHauteur=H;
   const faAutoL=faHauteur, faAutoH=L;
   const faL=c.faMan&&c.faManL>0?c.faManL:faAutoL, faH=c.faMan&&c.faManl>0?c.faManl:faAutoH;
   const faMat=(c.fam==='même struct.'||c.fam==='même'||c.fam==='Même que joues'||!c.fam)?rM(c.mat,ep):c.fam;
