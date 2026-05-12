@@ -1641,8 +1641,7 @@ function updateCharniereInfo(){
   var np=+(document.getElementById('c-nport')&&document.getElementById('c-nport').value)||1;
   if(infoDiv){
     infoDiv.style.display='block';
-      var portHfin = +(document.getElementById('c-h')&&document.getElementById('c-h').value||2200)
-               - +(document.getElementById('c-hpl')&&document.getElementById('c-hpl').value||100) - 4;
+      var portHfin = +(document.getElementById('c-h')&&document.getElementById('c-h').value||2200) - 4;  // H caisson - 4mm
   var posLines = '';
   infoDiv.innerHTML=
     '<strong>Ref. Hettich : '+refNum+'</strong> &mdash; '+ref.fixation+'<br>'+
@@ -1682,22 +1681,22 @@ function updatePorteInfo(){
   if(!info||nport===0){if(info)info.style.display='none';if(dims)dims.textContent='';return;}
   var largUtile=L-2*ep, portH, portL, desc;
   if(tport==='Applique'){
-    portH=Math.round(H-hpl-jH-jB);
+    portH=H-4;  // H caisson - 4mm
     portL=Math.floor((L-3)/nport);
     desc='Applique : ('+L+' - 3) / '+nport+' = '+portL+'mm par porte. Jeu entre portes : '+jE+'mm (affiché seulement).';
     if(recW) recW.style.display='none';
   } else if(tport==='Semi-applique'){
-    portH=Math.round(H-hpl-jH-jB);
+    portH=H-4;  // H caisson - 4mm
     portL=Math.floor((largUtile-jE*(nport-1))/nport);
     desc='Semi-applique : largeur utile ('+largUtile+'mm) - jeu entre ('+jE+'mm) / '+nport+' porte(s). Resultat : '+portL+'mm.';
     if(recW) recW.style.display='none';
   } else if(tport==='Rentrante'){
-    portH=Math.round(H-hpl-jH-jB);
+    portH=H-4;  // H caisson - 4mm
     portL=Math.round((largUtile-jE*(nport+1))/nport);
     desc="Porte dans l'ouverture, affleurante avec les joues.";
     if(recW) recW.style.display='none';
   } else {
-    portH=Math.round(H-hpl-jH-jB);
+    portH=H-4;  // H caisson - 4mm
     portL=Math.round((largUtile-jE*(nport-1))/nport);
     desc='Porte coulissante.';
     if(recW) recW.style.display='none';
@@ -1708,7 +1707,7 @@ function updatePorteInfo(){
 
 
 function calcPieces(c){
-  const ep=+c.ep,L=+c.l,H=+c.h,P=+c.p,hpl=+c.hpl||100,rain=+c.rainure||10;
+  const ep=+c.ep,L=+c.l,H=+c.h,P=+c.p,hpl=0,rain=+c.rainure||10; // hpl=0 : plinthe sur socle
   const fe=c.fondEp||5,fhe=c.fondHautEp||ep;
   const fbMs=(c.fbm==='même'||c.fbm==='même struct.'||c.fbm==='Même que joues')?rM(c.mat,ep):c.fbm;
   const fhMs=(c.fhm==='même struct.'||c.fhm==='même'||c.fhm==='Même que joues')?rM(c.mat,ep):c.fhm;
@@ -1770,8 +1769,7 @@ function calcPieces(c){
   const faEp=(c.faEp==='même'||c.faEp==='même struct.'||c.faEp==='Même que joues'||!c.faEp)?ep:(+c.faEp||ep);
 
   // Plinthe auto
-  const plAutoL=L-2*ep, plAutoH=hpl;
-  const plL=c.plMan&&c.plManL>0?c.plManL:plAutoL, plH=c.plMan&&c.plManl>0?c.plManl:plAutoH;
+  // Plinthe supprimée — gérée par le socle
 
   // Joues auto
   // Joue profondeur = P - ep.fond arrière (fond arrière applique sur joues)
@@ -1786,16 +1784,16 @@ function calcPieces(c){
     // Porte applique : L caisson - 3mm (jeu latéral 1,5mm chaque côté)
     // Pour 2 portes : (L - 3) / 2 = 298mm (jeu entre inclus dans les 3mm)
     portAutoL = np>0 ? Math.floor((L - 3) / np) : 0;
-    portAutoH = Math.round(H - hpl - jH - jB);
+    portAutoH = H - 4;  // hauteur porte = H caisson - 4mm
   } else if(tp==='Semi-applique'){
     portAutoL = np>0 ? Math.floor((largUtile - jE*(np-1)) / np) : 0;
-    portAutoH = Math.round(H - hpl - jH - jB);
+    portAutoH = H - 4;  // hauteur porte = H caisson - 4mm
   } else if(tp==='Rentrante'){
     portAutoL = np>0 ? Math.floor((largUtile - jE*(np-1) - 2) / np) : 0;
-    portAutoH = Math.round(H - hpl - jH - jB);
+    portAutoH = H - 4;  // hauteur porte = H caisson - 4mm
   } else { // Coulissante
     portAutoL = np>0 ? Math.round((largUtile - jE*(np-1)) / np) : 0;
-    portAutoH = Math.round(H - hpl - jH - jB);
+    portAutoH = H - 4;  // hauteur porte = H caisson - 4mm
   }
   const portL=c.portMan&&c.portManL>0?c.portManL:portAutoL, portH=c.portMan&&c.portManl>0?c.portManl:portAutoH;
 
@@ -1810,7 +1808,7 @@ function calcPieces(c){
     {nom:'Tablette haute',L:fhL,H:fhH,qte:1,mat:fhMs,ep:fhe,chants:c.fhChants,decor:c.fhd||c.decor,type:'étagèrehaut',manuel:c.fhMan},
     {nom:'Tablette basse',L:fbL,H:fbH,qte:1,mat:fbMs,ep:fe,chants:c.fbChants,decor:c.fbd||c.decor||'',type:'étagèrebas',manuel:c.fbMan},
     {nom:'Fond arrière',L:faL,H:faH,qte:1,mat:faMat,ep:faEp,chants:c.faChants||[],decor:c.fad||'',type:'fondarriere',manuel:c.faMan},
-    {nom:'Plinthe',L:plL,H:plH,qte:1,mat:plMs,ep,chants:c.plChants,decor:c.pld||c.decor,type:'plinthe',manuel:c.plMan},
+    // Plinthe supprimée — gérée par le socle
   ];
 
   for(let i=1;i<=nb;i++){
@@ -1857,6 +1855,19 @@ function calcPieces(c){
       });
     }
   }
+
+  // ── Plinthe socle & panneau socle (pro-rata par caisson) ──
+  var socleEp   = typeof window!=='undefined' ? (+(document.getElementById('socle-ep') ||{value:19}).value||19)  : 19;
+  var socleH    = typeof window!=='undefined' ? (+(document.getElementById('socle-h')  ||{value:120}).value||120) : 120;
+  var socleProf = typeof window!=='undefined' ? (+(document.getElementById('socle-prof')||{value:0}).value||P)    : P;
+  if(socleProf===0) socleProf=P;
+  var faMsS=(c.fam==='même struct.'||c.fam==='même'||!c.fam)?rM(c.mat,ep):c.fam;
+  pieces.push({nom:'Plinthe socle',  L:L, H:socleH,    qte:1, mat:faMsS, ep:socleEp,
+    chants:[], decor:c.decor||'', type:'socle',
+    note:'Façade socle — '+L+'×'+socleH+'mm'});
+  pieces.push({nom:'Panneau socle',  L:L, H:socleProf,  qte:1, mat:faMsS, ep:socleEp,
+    chants:[], decor:c.decor||'', type:'socle',
+    note:'Dessus socle — '+L+'×'+socleProf+'mm'});
 
   // Pièces supplémentaires
   (c.piecesSup||[]).forEach(p=>pieces.push(p));
@@ -2276,6 +2287,9 @@ function renderDebit(){
     if(!pM[k])pM[k]={mat:p.mat,decor:p.decor,pieces:[]};
     for(let q=0;q<p.qte;q++)pM[k].pieces.push({...p,qte:1,nom:p.qte>1?`${p.nom} (${q+1}/${p.qte})`:p.nom,_c:c.nom});
   }));
+
+  // Pièces socle incluses dans calcPieces de chaque caisson
+
   const proj=document.getElementById('p-nom').value||'Projet';
   const cli=document.getElementById('p-client').value,pos=document.getElementById('p-poseur').value;
   const dt=document.getElementById('p-date').value,dev=document.getElementById('p-devis').value;
@@ -2386,53 +2400,8 @@ function renderDebit(){
     h+='</tbody></table></div>';
   }
 
-  // ── SOCLE — pied 11mm + panneau 19mm = hauteur 120mm ──
-  var largTotale = caissons.reduce(function(s,c){return s+(+c.l||0);},0);
-  if(largTotale > 0){
-    var c0 = caissons[0]||{};
-    var matSocle = rM(c0.mat||'EGGER',c0.ep||19);
-    var decSocle = c0.decor||'';
-    var profSocleCustom = +document.getElementById('socle-prof')?.value||0;
-    var epSocle = +document.getElementById('socle-ep')?.value||19;
-    var hSocle  = +document.getElementById('socle-h')?.value||120;
-    var profSocle = profSocleCustom || +c0.p||580;
-    h += '<div class="card" style="margin-top:.75rem"><div class="st">Socle — '+largTotale+'mm total</div>';
-    h += '<table style="width:100%;border-collapse:collapse;font-size:11px">';
-    h += '<thead><tr style="background:#f4f2ff">';
-    h += '<th style="padding:5px 8px;text-align:left">Pièce</th>';
-    h += '<th style="padding:5px 8px;text-align:center">Qté</th>';
-    h += '<th style="padding:5px 8px;text-align:right">L mm</th>';
-    h += '<th style="padding:5px 8px;text-align:right">l mm</th>';
-    h += '<th style="padding:5px 8px;text-align:left">Matériau</th>';
-    h += '<th style="padding:5px 8px;text-align:left">Note</th>';
-    h += '</tr></thead><tbody>';
-    // Panneau de socle (19mm) : L = largeur totale, H = 120mm
-    var nbPieds = Math.ceil(largTotale/600)+1;
-    var profPied = profSocle - epSocle; // profondeur pied = profondeur socle - ep panneau avant
-    var socleItems = [
-      {nom:'Vérin réglable Pilier', qte:nbPieds*2, L:'-', H:'-', mat:'Vérin métal', ep:11,
-       note:'H 100mm, réglable 82-125mm — '+nbPieds+' positions av+ar (1 toutes les ~600mm)'},
-      {nom:'Panneau socle',       qte:1, L:largTotale, H:profSocle, mat:matSocle, ep:epSocle,
-       note:'Pose à plat (dessus des pieds) — '+largTotale+'×'+profSocle+'mm'},
-      {nom:'Plinthe socle',       qte:1, L:largTotale, H:hSocle,    mat:matSocle, ep:epSocle,
-       note:'Face avant — décor '+decSocle+' — '+largTotale+'×'+hSocle+'mm'},
-    ];
-    socleItems.forEach(function(it){
-      h += '<tr style="border-bottom:1px solid #eee">';
-      h += '<td style="padding:4px 8px;font-weight:500">'+it.nom+'</td>';
-      h += '<td style="padding:4px 8px;text-align:center">'+it.qte+'</td>';
-      h += '<td style="padding:4px 8px;text-align:right">'+it.L+'</td>';
-      h += '<td style="padding:4px 8px;text-align:right">'+it.H+'</td>';
-      h += '<td style="padding:4px 8px"><span class="pill '+pOf(it.mat)+'">'+it.mat+'</span></td>';
-      h += '<td style="padding:4px 8px;font-size:10px;color:#666">'+it.note+'</td>';
-      h += '</tr>';
-    });
-    h += '</tbody></table>';
-    h += '<div style="font-size:10px;color:#888;margin-top:4px">Vérins Pilier 82-125mm + panneau '+epSocle+'mm → structure socle | Plinthe façade '+hSocle+'mm | Largeur totale  | Largeur totale : '+largTotale+'mm</div>';
-    h += '</div>';
-  }
 
-  document.getElementById('fiche').innerHTML=h;
+    document.getElementById('fiche').innerHTML=h;
 }
 
 // ══════════════════════════════════════════════════════
