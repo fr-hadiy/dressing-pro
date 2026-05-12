@@ -136,6 +136,38 @@ button:hover{background:#f0f0f0}
   </div>
 </div>
 
+<!-- SOCLE -->
+<div class="card">
+  <div class="st">Socle du dressing</div>
+  <div class="g4" style="margin-bottom:.5rem">
+    <div>
+      <label>Profondeur socle mm</label>
+      <input id="socle-prof" type="number" placeholder="Auto = P caisson" style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
+      <div style="font-size:9px;color:#888;margin-top:2px">Vide = profondeur du caisson</div>
+    </div>
+    <div>
+      <label>Jeu plafond mm</label>
+      <input id="socle-jplaf" type="number" value="10" style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
+    </div>
+    <div>
+      <label>Hauteur socle mm</label>
+      <input id="socle-h" type="number" value="120" oninput="calcHauteurCaisson()" style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
+    </div>
+    <div>
+      <label>Ep. panneau socle mm</label>
+      <select id="socle-ep" style="height:30px;font-size:11px;border:1px solid #ddd;border-radius:6px;padding:0 6px;width:100%">
+        <option value="19" selected>19mm</option>
+        <option value="16">16mm</option>
+        <option value="22">22mm</option>
+      </select>
+    </div>
+  </div>
+  <div style="font-size:10px;color:#3C3489;background:#f4f2ff;padding:5px 8px;border-radius:6px">
+    📐 Pied réglable 11mm + panneau <span id="socle-ep-label">19</span>mm = structure.
+    Plinthe <span id="socle-h-label">120</span>mm — même matériau que les caissons.
+  </div>
+</div>
+
 <!-- CAISSON -->
 <div class="card">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
@@ -148,7 +180,13 @@ button:hover{background:#f0f0f0}
   <div class="g6" style="margin-bottom:.5rem">
     <div><label>Repère</label><input id="c-nom" placeholder="C01 Penderie G"/></div>
     <div><label>Largeur ext. mm</label><input id="c-l" type="number" value="600" oninput="liveS32()"/></div>
-    <div><label>Hauteur ext. mm</label><input id="c-h" type="number" value="2200" oninput="liveS32()"/></div>
+    <div><label>Hauteur totale (sol→plafond) mm</label>
+          <input id="c-htotal" type="number" value="2200" oninput="calcHauteurCaisson()"/>
+          <div style="margin-top:3px;font-size:10px;color:#3C3489">
+            → Caisson : <strong id="c-h-auto">2070</strong>mm
+            <span style="color:#888">(H − 10 jeu − 120 socle)</span>
+          </div>
+          <input id="c-h" type="hidden" value="2070"/></div>
     <div><label>Profondeur ext. mm</label><input id="c-p" type="number" value="580" oninput="liveS32()"/></div>
     <div><label>Quantité</label><input id="c-qty" type="number" value="1" min="1" max="20"/></div>
     <div><label>Notes caisson</label><input id="c-notes" placeholder="angle, mural…"/></div>
@@ -175,7 +213,7 @@ button:hover{background:#f0f0f0}
     <div><label>Rainure fond mm</label>
       <select id="c-rainure" onchange="liveS32()"><option value="0" selected>0 — vissé</option><option value="10">10</option><option value="8">8</option></select>
     </div>
-    <div><label>Hauteur plinthe mm</label><input id="c-hpl" type="number" value="100" oninput="liveS32();updatePorteInfo();updateCharniereInfo()"/></div>
+    <div><label>Plinthe caisson</label><input id="c-hpl" type="hidden" value="0"/><span style="font-size:10px;color:#888">Gérée par le socle</span></div>
   </div>
 
   <!-- SENS DU FIL -->
@@ -228,7 +266,7 @@ button:hover{background:#f0f0f0}
       ✓ Par défaut identiques aux joues — modifiables individuellement.
     </div>
     <div style="margin-bottom:.5rem">
-      <div style="font-size:11px;font-weight:500;color:#555;margin-bottom:4px">Fond bas</div>
+      <div style="font-size:11px;font-weight:500;color:#555;margin-bottom:4px">Tablette basse</div>
       <div class="g4">
         <div><label>Matériau</label>
           <select id="c-fbm" onchange="syncFondsMat()">
@@ -262,7 +300,7 @@ button:hover{background:#f0f0f0}
       </div>
     </div>
     <div style="margin-bottom:.5rem">
-      <div style="font-size:11px;font-weight:500;color:#555;margin-bottom:4px">Fond haut</div>
+      <div style="font-size:11px;font-weight:500;color:#555;margin-bottom:4px">Tablette haute</div>
       <div class="g4">
         <div><label>Matériau</label>
           <select id="c-fhm" onchange="syncFondsMat()">
@@ -396,17 +434,17 @@ button:hover{background:#f0f0f0}
   <div class="st">Séparations verticales intérieures</div>
   <div class="card-sub">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem">
-      <span style="font-size:11px;color:#666">Crée des sous-sections avec tablettes et portes indépendantes.</span>
+      <span style="font-size:11px;color:#666">Crée des sous-sections avec étagères et portes indépendantes.</span>
       <button onclick="addSepLigne()" style="padding:5px 12px;font-size:11px;background:#EEEDFE;color:#3C3489;border:1px solid #c0baee;border-radius:8px;cursor:pointer">+ Ajouter une séparation</button>
     </div>
     <div id="sep-lignes-list"></div>
   </div>
 
   <!-- ═══ TABLETTES ═══ -->
-  <div class="st">Tablettes intérieures</div>
+  <div class="st">Étagères intérieures</div>
   <div class="card-sub">
     <div class="g5" style="margin-bottom:.4rem">
-      <div><label>Nb tablettes</label><input id="c-tab" type="number" value="2" min="0"/></div>
+      <div><label>Nb étagères</label><input id="c-tab" type="number" value="2" min="0"/></div>
       <div><label>Matériau</label><select id="c-tabm"><option value="même">Même struct.</option><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option><option value="MDF brut">MDF brut</option><option value="CTP">CTP</option></select></div>
       <div><label>Épaisseur</label><select id="c-tabep"><option value="même">Même</option><option value="19">19</option><option value="18">18</option><option value="22">22</option></select></div>
       <div><label>Référence</label><input id="c-tabd" data-auto-decor="1" placeholder="si différent"/></div>
@@ -539,12 +577,12 @@ button:hover{background:#f0f0f0}
   <div class="st">Tiroirs</div>
   <div class="card-sub">
     <div id="tir-charn-warn" style="display:none;background:#fff8e6;border-radius:8px;padding:7px 12px;margin-bottom:.5rem;font-size:11px;color:#996600">
-      ⚠ Charnière sélectionnée — commencer le premier tiroir à plus de <strong id="tir-warn-h">98</strong>mm depuis le fond bas, ou le placer en partie haute du caisson.
+      ⚠ Charnière sélectionnée — commencer le premier tiroir à plus de <strong id="tir-warn-h">98</strong>mm depuis le tablette basse, ou le placer en partie haute du caisson.
     </div>
     <div class="g3" style="margin-bottom:.6rem">
       <div>
         <label>Épaisseur réservée coulisse mm</label>
-        <input id="c-tir-epcoul" type="number" value="12.7" step="0.1" oninput="updateLargCaisse()" style="font-weight:500"/>
+        <input id="c-tir-epcoul" type="number" value="15" step="0.1" oninput="updateLargCaisse()" style="font-weight:500"/>
       </div>
       <div>
         <label>Largeur caisse calculée (auto)</label>
@@ -615,7 +653,7 @@ button:hover{background:#f0f0f0}
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:#666">
     <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#c9a06a"></span>Structure</span>
     <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#d4e8f0;border:1px solid #aac"></span>Portes</span>
-    <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e8d5b0"></span>Tablettes</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#e8d5b0"></span>Étagères</span>
     <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8ab4d4"></span>Fond arrière</span>
     <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#b8d4e8;border:1px solid #88b"></span>Tiroirs</span>
   </div>
@@ -866,7 +904,7 @@ function rdTiroirs(){
 
 function calcTiroirs(tiroirLines,c,ep,largUtile,tirEpCoul,pieces){
   if(!tiroirLines||!tiroirLines.length) return;
-  var epCoul = +tirEpCoul||12.7;
+  var epCoul = +tirEpCoul||15;  // coulisse 15mm de chaque côté
   var largCaisse = Math.round(largUtile - 2*epCoul);
   var CROMIC_SA={300:'263426',350:'263433',400:'263440',450:'263447',500:'263454',550:'263461',600:'263468'};
   var CROMIC_AV={300:'263377',350:'263384',400:'263391',450:'263398',500:'263405',550:'263412',600:'263419'};
@@ -882,14 +920,29 @@ function calcTiroirs(tiroirLines,c,ep,largUtile,tirEpCoul,pieces){
     var matF = tl.matfond==='même caisse' ? matC : 'HDF 5mm';
     var epF  = tl.matfond==='même caisse' ? tl.epCaisse : 5;
     var crom = cromCode(tl.prof, tl.amort);
-    var coteL = tl.prof - tl.epCaisse;
+    // Côtés : longueur = longueur coulisse (la coulisse détermine la longueur du côté)
+    var longueurCoulisse = +tl.prof || 450;
+    var coteL = longueurCoulisse;  // côté = longueur coulisse
+    // Vérification profondeur utile minimale = coulisse + 40mm
+    var profMinRequis = longueurCoulisse + 40;
+    var profDisponible = +c.p - (+c.faEp||19||+c.ep); // profUtileInt approx.
     var avArL = largCaisse - 2*tl.epCaisse;
-    var fondP = tl.prof - 2*tl.epCaisse;
+    // Côtés et arrière réduits de 18mm pour logement coulisse
+    var hcaisseReduit = Math.max(1, tl.hcaisse - 18);
+    // Fond tiroir : L = largUtile - 8mm (jeu 4mm chaque côté)
+    //              H = longueur coulisse - ep paroi arrière
+    var fondL = largCaisse - 10;                 // ex: 532-10=522mm pour L=600 (largCaisse - jeu 5mm chaque côté)
+    var fondH = coteL;  // fond H = longueur côté (coulisse - ep)
+    var fondP = fondH;  // alias
     var noteC = '';
-    pieces.push({nom:label+' — Côtés (×'+(tl.nb*2)+')', L:coteL, H:tl.hcaisse, qte:tl.nb*2, mat:matC, ep:tl.epCaisse, chants:tl.chantCote||[], decor:tl.ref, type:'tiroir-caisse', note:noteC});
+    // Avertissement profondeur insuffisante
+    if(profDisponible < profMinRequis){
+      noteC = '⚠ Prof. utile '+profDisponible+'mm < '+profMinRequis+'mm requis (coulisse '+longueurCoulisse+'+40mm)';
+    }
+    pieces.push({nom:label+' — Côtés (×'+(tl.nb*2)+')', L:coteL, H:hcaisseReduit, qte:tl.nb*2, mat:matC, ep:tl.epCaisse, chants:tl.chantCote||[], decor:tl.ref, type:'tiroir-caisse', note:noteC});
     pieces.push({nom:label+' — Avant×'+tl.nb,        L:largCaisse, H:tl.hcaisse, qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantAvant||[], decor:tl.ref, type:'tiroir-caisse'});
-    pieces.push({nom:label+' — Arr.×'+tl.nb,      L:avArL, H:tl.hcaisse, qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantArriere||[], decor:tl.ref, type:'tiroir-caisse'});
-    pieces.push({nom:label+' — Fond×'+tl.nb,         L:avArL, H:fondP, qte:tl.nb, mat:matF, ep:epF, chants:[], decor:'', type:'tiroir-caisse'});
+    pieces.push({nom:label+' — Arr.×'+tl.nb,      L:avArL, H:hcaisseReduit, qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantArriere||[], decor:tl.ref, type:'tiroir-caisse'});
+    pieces.push({nom:label+' — Fond×'+tl.nb,         L:fondL, H:fondH, qte:tl.nb, mat:matF, ep:epF, chants:[], decor:'', type:'tiroir-caisse'});
     if(tl.type==='encastre' && !tl.cseule){
       var facEp  = tl.fep==='même' ? ep : +tl.fep;
       var facMat = tl.fmat==='même' ? rM(c.mat,ep) : tl.fmat;
@@ -963,7 +1016,7 @@ function updateCoulisse(){
 }
 
 function updateLargCaisse(){
-  var epCoul=+(document.getElementById('c-tir-epcoul')||{value:12.7}).value||12.7;
+  var epCoul=+(document.getElementById('c-tir-epcoul')||{value:15}).value||15;
   var L=+(document.getElementById('c-l')||{value:0}).value||0;
   var ep=+(document.getElementById('c-ep')||{value:19}).value||19;
   var largUtile=L-2*ep;
@@ -1021,7 +1074,7 @@ function initChantsRef(){
   document.querySelectorAll('[data-auto-chant="1"]').forEach(function(el){
     if(!el.value||el.value.startsWith('ABS 0,8mm')) el.value=absChant;
   });
-  // 3. S'assurer que L1+L2 sont cochés pour fond bas et fond haut
+  // 3. S'assurer que L1+L2 sont cochés pour tablette basse et tablette haute
   ['fb','fh'].forEach(function(px){
     var cb=document.getElementById('fpc-'+px+'-L1');
     if(cb && !cb.checked) cb.checked=true;
@@ -1059,7 +1112,7 @@ function getManDims(px){
 }
 
 // ══════════════════════════════════════════════════════
-// FACE PICKER (grand, visuel — joue, tablette, porte)
+// FACE PICKER (grand, visuel — joue, étagère, porte)
 // ══════════════════════════════════════════════════════
 function buildFP(px, precheck){
   const el=document.getElementById(`fp-${px}`);if(!el)return;
@@ -1202,7 +1255,7 @@ function rdPiecesSup(){
 function cS32(H,P,ep,r1,r2,pas,series,feEp){
   r1=+r1||37;r2=+r2||37;pas=+pas||32;series=+series||2;
   feEp=+feEp||5;
-  // Premier trou = ep fond bas + 37mm (dégagement standard au-dessus du fond bas intérieur)
+  // Premier trou = ep tablette basse + 37mm (dégagement standard au-dessus du tablette basse intérieur)
   const bb=feEp+37;
   // Dernier trou à 37mm du bord haut brut (symétrie)
   const bh=H-37;
@@ -1211,8 +1264,28 @@ function cS32(H,P,ep,r1,r2,pas,series,feEp){
   const pt=Math.round(bb+off),dt=pt+(nb-1)*pas;
   return{nb,pt,dt,posAv:r1,posAr:+P-r2,r1,r2,pas,series,feEp,
     delta:Math.abs(pt-(H-dt)),
-    desc:'1er trou : '+(feEp+37)+'mm (fond bas '+feEp+'mm + 37mm)'};
+    desc:'1er trou : '+(feEp+37)+'mm (tablette basse '+feEp+'mm + 37mm)'};
 }
+function calcHauteurCaisson(){
+  var htotal  = +document.getElementById('c-htotal')?.value || 2200;
+  var jplaf   = +document.getElementById('socle-jplaf')?.value || 10;
+  var hsocle  = +document.getElementById('socle-h')?.value || 120;
+  var hcaisson = htotal - jplaf - hsocle;
+  var el = document.getElementById('c-h');
+  var elAuto = document.getElementById('c-h-auto');
+  if(el) el.value = hcaisson;
+  if(elAuto) elAuto.textContent = hcaisson;
+  // Mettre à jour les labels
+  var epEl = document.getElementById('socle-ep');
+  var epLabel = document.getElementById('socle-ep-label');
+  var hLabel = document.getElementById('socle-h-label');
+  if(epEl && epLabel) epLabel.textContent = epEl.value;
+  if(hLabel) hLabel.textContent = hsocle;
+  liveS32();
+  updatePorteInfo();
+  updateCharniereInfo();
+}
+
 function liveS32(){
   const el=document.getElementById('s32-prev');if(!el)return;
   if(usin!=='1f'&&usin!=='2f'){el.innerHTML='';return;}
@@ -1302,11 +1375,11 @@ function addSepLigne(){
   html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer">';
   html += '<input type="radio" name="sep-s32-'+idx+'" value="2faces" style="accent-color:#3C3489"/> 2 faces ×2 rangées</label>';
   html += '</div></div></div>';
-  // Tablettes et portes par section
+  // Étagères et portes par section
   html += '<div style="background:#fafaf8;border-radius:6px;padding:6px 10px;margin-top:4px">';
   html += '<div style="font-size:10px;font-weight:500;color:#666;margin-bottom:5px">Section gauche (entre joue G et séparation)</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px">';
-  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb tablettes</label><input type="number" id="sep-tabn-g-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb étagères</label><input type="number" id="sep-tabn-g-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
   html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb portes</label><input type="number" id="sep-portn-g-'+idx+'" value="1" min="0" max="4" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
   html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Type porte</label>';
   html += '<select id="sep-portt-g-'+idx+'" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
@@ -1352,7 +1425,7 @@ function calcSeps(seps, c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32d
   if(!seps||!seps.length) return;
   var jH=+c.jH||2, jB=+c.jB||2, jE=+c.jE||3;
   // Dimensions d'une séparation = même que joue intérieure
-  // L = profondeur utile, H = hauteur joue - ep fond haut - ep fond bas
+  // L = profondeur utile, H = hauteur joue - ep tablette haute - ep tablette basse
   var sepHauto = H - fhe - fe;
   seps.forEach(function(sep, i){
     var sepEp = sep.ep==='même' ? ep : +sep.ep;
@@ -1378,15 +1451,15 @@ function calcSeps(seps, c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32d
     // Section G : de la joue G au bord gauche de la séparation
     var sousLargG = sep.pos - sepEp/2;
     var tabAutoH = profUtileInt;
-    // Tablettes section gauche
+    // Étagères section gauche
     for(var t=1; t<=sep.tabNG; t++){
       pieces.push({
-        nom: 'Tablette section G-'+(i+1)+' n°'+t,
+        nom: 'Étagère section G-'+(i+1)+' n°'+t,
         L: Math.round(sousLargG), H: tabAutoH, qte: 1,
         mat: rM(c.tabm==='même'?c.mat:c.tabm, c.tabep==='même'?ep:+c.tabep),
         ep: c.tabep==='même'?ep:+c.tabep,
         chants: c.tabChants||[], decor: c.tabd||c.decor,
-        type: 'tablette'
+        type: 'étagère'
       });
     }
     // Portes section gauche
@@ -1448,7 +1521,7 @@ function drawCaisson(c){
     svg+='<rect x="'+sx+'" y="'+int_y_top+'" width="'+s_sep+'" height="'+(int_y_bot-int_y_top)+'" fill="#c9a06a" stroke="#8a6030" stroke-width="0.8"/>';
     svg+='<text x="'+(sx+s_sep/2)+'" y="'+(int_y_bot+16)+'" text-anchor="middle" font-size="7" fill="#666">'+pos+'mm</text>';
   });
-  // Sections : tablettes, tiroirs, portes
+  // Sections : étagères, tiroirs, portes
   var sections=[];
   var sortedSeps=seps.slice().sort(function(a,b){return +a.pos-+b.pos;});
   if(!sortedSeps.length){
@@ -1476,7 +1549,7 @@ function drawCaisson(c){
       svg+='<text x="'+(sx+sw/2)+'" y="'+(tirCur+th/2-6)+'" text-anchor="middle" font-size="7" fill="#0a3a6a">'+(+tl.hcaisse||120)+'mm</text>';
       tirCur+=th+Math.max(2,Math.round(20*scale)); // 20mm entre tiroirs
     });
-    // Tablettes
+    // Étagères
     if(sec.tabN>0 && usH>15){
       var step=Math.round(usH/(sec.tabN+1));
       for(var t=0;t<sec.tabN;t++){
@@ -1653,39 +1726,45 @@ function calcPieces(c){
   // ─────────────────────────────────────────────────────
   // COTES UTILES DU CAISSON
   //
-  // Largeur utile  = L - 2×ép  (entre les deux joues)
-  // Profondeur utile = P - ép  (ext. - 1 joue arrière)
-  //   → la joue arrière donne la butée arrière intérieure
-  //   → pas de déduction de rainure ici : la profondeur
-  //     utile est la profondeur libre pour les pièces
+  // Largeur utile  = L - 2×ep  (entre les deux joues)
+  // Profondeur utile = P - ep  (profondeur intérieure utile)
   //
-  // Tablettes, fond bas, fond haut :
-  //   L = largeur utile, l = profondeur utile
+  // Étagères, tablette basse, tablette haute :
+  //   L = largeur utile (entre joues)
+  //   l = profondeur utile (P - ep)
   //
-  // Fond arrière :
-  //   L = largeur utile
-  //   H = hauteur utile (H ext - ép.fond haut - ép.fond bas)
+  // Fond arrière (applique derrière les joues) :
+  //   L (grand côté) = H - hpl - ep.tablette haute - ep.tablette basse
+  //   l (petit côté) = L EXTÉRIEUR du caisson (joues comprises)
   // ─────────────────────────────────────────────────────
   const largUtile = L - 2*ep;          // largeur entre joues
-  const profUtileInt = P - ep;          // profondeur utile (ext - 1 joue arrière)
+  // Fond arrière APPLIQUE sur joues : P caisson = P joue + ep.fond arr.
+  // → P joue = P - faEp → profondeur utile = P - faEp
+  const faEpReal=(c.faEp==='même'||c.faEp==='même struct.'||c.faEp==='Même que joues'||!c.faEp)?ep:(+c.faEp||ep);
+  const profUtileInt = P - faEpReal;    // profondeur joue = P - ep.fond arrière
   const hautUtile = H - fhe - fe;       // hauteur utile intérieure
 
-  // Tablettes
+  // Étagères
   const tabAutoL=largUtile, tabAutoH=profUtileInt;
   const tabL=c.tabMan&&c.tabManL>0?c.tabManL:tabAutoL, tabH=c.tabMan&&c.tabManl>0?c.tabManl:tabAutoH;
 
-  // Fond haut et fond bas :
-  //   L = largeur tablette (= largeur utile = L - 2×ep) ✓
+  // Tablette haute et tablette basse :
+  //   L = largeur étagère (= largeur utile = L - 2×ep) ✓
   //   l = profondeur joue  (= P, profondeur extérieure du caisson)
   //       la joue donne la profondeur totale, le fond l'occupe entièrement
-  const fhL=c.fhMan&&c.fhManL>0?c.fhManL:largUtile, fhH=c.fhMan&&c.fhManl>0?c.fhManl:P;
-  const fbL=c.fbMan&&c.fbManL>0?c.fbManL:largUtile, fbH=c.fbMan&&c.fbManl>0?c.fbManl:P;
+  // Tablette haute : L = largeur utile, l = profondeur utile
+  const fhAutoL=largUtile, fhAutoH=profUtileInt;
+  const fhL=c.fhMan&&c.fhManL>0?c.fhManL:fhAutoL, fhH=c.fhMan&&c.fhManl>0?c.fhManl:fhAutoH;
+  // Tablette basse : L = largUtile, l = profUtileInt = P - ep.fond arr.
+  const fbAutoL2=largUtile, fbAutoH2=profUtileInt;
+  const fbL=c.fbMan&&c.fbManL>0?c.fbManL:fbAutoL2, fbH=c.fbMan&&c.fbManl>0?c.fbManl:fbAutoH2;
 
   // Fond arrière
-  // Fond arrière : L = H joue − hpl − ép.fond haut − ép.fond bas
+  // Fond arrière : L = H joue − hpl − ép.tablette haute − ép.tablette basse
   //   recalculé selon épaisseurs réelles de la structure
+  // Fond arrière APPLIQUE TOTALE sur joues → l = L extérieur
   const faHauteur=H-hpl-fhe-fe;
-  const faAutoL=faHauteur, faAutoH=largUtile;
+  const faAutoL=faHauteur, faAutoH=L;
   const faL=c.faMan&&c.faManL>0?c.faManL:faAutoL, faH=c.faMan&&c.faManl>0?c.faManl:faAutoH;
   const faMat=(c.fam==='même struct.'||c.fam==='même'||c.fam==='Même que joues'||!c.fam)?rM(c.mat,ep):c.fam;
   const faEp=(c.faEp==='même'||c.faEp==='même struct.'||c.faEp==='Même que joues'||!c.faEp)?ep:(+c.faEp||ep);
@@ -1695,7 +1774,8 @@ function calcPieces(c){
   const plL=c.plMan&&c.plManL>0?c.plManL:plAutoL, plH=c.plMan&&c.plManl>0?c.plManl:plAutoH;
 
   // Joues auto
-  const joueAutoL=H, joueAutoH=P;  // L=grand côté (hauteur), l=petit côté (profondeur)
+  // Joue profondeur = P - ep.fond arrière (fond arrière applique sur joues)
+  const joueAutoL=H, joueAutoH=P-faEpReal;  // l = P joue = P - faEp
   const joueL=c.joueMan&&c.joueManL>0?c.joueManL:joueAutoL, joueH=c.joueMan&&c.joueManl>0?c.joueManl:joueAutoH;
 
   // Portes auto
@@ -1727,14 +1807,14 @@ function calcPieces(c){
   const pieces=[
     {nom:'Joue G',L:joueL,H:joueH,qte:1,mat:matS,ep,chants:c.joueChants,decor:c.decor,type:'joue',s32,taq:c.taq,fil:c.fil,manuel:c.joueMan,cremType:cremT},
     {nom:'Joue D',L:joueL,H:joueH,qte:1,mat:matS,ep,chants:c.joueChants,decor:c.decor,type:'joue',s32,taq:c.taq,fil:c.fil,manuel:c.joueMan,cremType:cremT},
-    {nom:'Fond haut',L:fhL,H:fhH,qte:1,mat:fhMs,ep:fhe,chants:c.fhChants,decor:c.fhd||c.decor,type:'fondhaut',manuel:c.fhMan},
-    {nom:'Fond bas',L:fbL,H:fbH,qte:1,mat:fbMs,ep:fe,chants:c.fbChants,decor:c.fbd||c.decor||'',type:'fondbas',manuel:c.fbMan},
+    {nom:'Tablette haute',L:fhL,H:fhH,qte:1,mat:fhMs,ep:fhe,chants:c.fhChants,decor:c.fhd||c.decor,type:'étagèrehaut',manuel:c.fhMan},
+    {nom:'Tablette basse',L:fbL,H:fbH,qte:1,mat:fbMs,ep:fe,chants:c.fbChants,decor:c.fbd||c.decor||'',type:'étagèrebas',manuel:c.fbMan},
     {nom:'Fond arrière',L:faL,H:faH,qte:1,mat:faMat,ep:faEp,chants:c.faChants||[],decor:c.fad||'',type:'fondarriere',manuel:c.faMan},
     {nom:'Plinthe',L:plL,H:plH,qte:1,mat:plMs,ep,chants:c.plChants,decor:c.pld||c.decor,type:'plinthe',manuel:c.plMan},
   ];
 
   for(let i=1;i<=nb;i++){
-    pieces.push({nom:`Tablette ${i}`,L:tabL,H:tabH,qte:1,mat:tbMs,ep:tbEp,chants:c.tabChants,decor:c.tabd||c.decor,type:'tablette',manuel:c.tabMan});
+    pieces.push({nom:`Étagère ${i}`,L:tabL,H:tabH,qte:1,mat:tbMs,ep:tbEp,chants:c.tabChants,decor:c.tabd||c.decor,type:'étagère',manuel:c.tabMan});
   }
   if(np>0&&c.tport!=='Aucune'){
     pieces.push({nom:`Porte (×${np}) — ${c.tport}`,L:portL,H:portH,qte:np,mat:ptMs,ep:ptEp,chants:c.portChants,decor:c.portd||c.decor,type:'porte',jd,manuel:c.portMan});
@@ -1790,7 +1870,9 @@ function calcPieces(c){
 function addC(){
   // Si on est en mode édition, rediriger vers updateC
   if(typeof editingIndex !== 'undefined' && editingIndex >= 0){ updateC(); return; }
-  const nom=document.getElementById('c-nom').value.trim()||`C${String(caissons.length+1).padStart(2,'0')}`;
+  // Numérotation automatique C01, C02... si nom vide
+  var nomRaw = document.getElementById('c-nom')?.value?.trim()||'';
+  var nom = nomRaw || ('C'+String(caissons.length+1).padStart(2,'0'));
   const qty=+document.getElementById('c-qty').value||1;
   const ep=+document.getElementById('c-ep').value||19;
   const fbepSel=document.getElementById('c-fbep')?.value;
@@ -1893,7 +1975,7 @@ function editC(i){
   if(c.r1) document.getElementById('c-r1').value = c.r1;
   if(c.r2) document.getElementById('c-r2').value = c.r2;
   if(c.pas) document.getElementById('c-pas').value = c.pas;
-  // Tablettes
+  // Étagères
   if(document.getElementById('c-tab'))   document.getElementById('c-tab').value   = c.tab||0;
   if(document.getElementById('c-tabep')) document.getElementById('c-tabep').value = c.tabep||'même';
   if(document.getElementById('c-tabd'))  document.getElementById('c-tabd').value  = c.tabd||'';
@@ -1951,10 +2033,10 @@ function updateC(){
     joueChants:rdFP('joue'), fondEp:fe, fondHautEp:fhe,
     fbm:document.getElementById('c-fbm').value,
     fbd:document.getElementById('c-fbd').value,
-    fbChants:rdFPmini('fondbas'),
+    fbChants:rdFPmini('étagèrebas'),
     fhm:document.getElementById('c-fhm').value,
     fhd:document.getElementById('c-fhd').value,
-    fhChants:rdFPmini('fondhaut'),
+    fhChants:rdFPmini('étagèrehaut'),
     fam:document.getElementById('c-fam').value,
     faEp:document.getElementById('c-fa-ep')?.value||'même',
     fad:document.getElementById('c-fad').value,
@@ -2044,7 +2126,7 @@ function rowHtml(p,hasSys32){
               Série avant à ${sd.r1} mm du chant avant — Série arrière à ${sd.r2} mm du chant arrière<br>
               Taquet : ${p.taq||'Non débouchant Ø 5 mm'}
             </td>`;}
-    else if(p.type==='tablette')s32c='<td style="font-size:9px;color:#888">taquets</td>';
+    else if(p.type==='étagère')s32c='<td style="font-size:9px;color:#888">taquets</td>';
     else s32c='<td></td>';
   }
   const manBdg=p.manuel?'<span class="bdg ba" style="font-size:8px;margin-left:3px">manuel</span>':'';
@@ -2247,7 +2329,7 @@ function renderDebit(){
               </div>
             </td>`;
           }
-          else if(p.type==='tablette')s32c='<td style="font-size:9px;color:#888">taquets</td>';
+          else if(p.type==='étagère')s32c='<td style="font-size:9px;color:#888">taquets</td>';
           else s32c='<td></td>';
         }
         const manBdg=p.manuel?'<span class="bdg ba" style="font-size:8px">manuel</span> ':'';
@@ -2302,6 +2384,52 @@ function renderDebit(){
       h+='</tr>';
     });
     h+='</tbody></table></div>';
+  }
+
+  // ── SOCLE — pied 11mm + panneau 19mm = hauteur 120mm ──
+  var largTotale = caissons.reduce(function(s,c){return s+(+c.l||0);},0);
+  if(largTotale > 0){
+    var c0 = caissons[0]||{};
+    var matSocle = rM(c0.mat||'EGGER',c0.ep||19);
+    var decSocle = c0.decor||'';
+    var profSocleCustom = +document.getElementById('socle-prof')?.value||0;
+    var epSocle = +document.getElementById('socle-ep')?.value||19;
+    var hSocle  = +document.getElementById('socle-h')?.value||120;
+    var profSocle = profSocleCustom || +c0.p||580;
+    h += '<div class="card" style="margin-top:.75rem"><div class="st">Socle — '+largTotale+'mm total</div>';
+    h += '<table style="width:100%;border-collapse:collapse;font-size:11px">';
+    h += '<thead><tr style="background:#f4f2ff">';
+    h += '<th style="padding:5px 8px;text-align:left">Pièce</th>';
+    h += '<th style="padding:5px 8px;text-align:center">Qté</th>';
+    h += '<th style="padding:5px 8px;text-align:right">L mm</th>';
+    h += '<th style="padding:5px 8px;text-align:right">l mm</th>';
+    h += '<th style="padding:5px 8px;text-align:left">Matériau</th>';
+    h += '<th style="padding:5px 8px;text-align:left">Note</th>';
+    h += '</tr></thead><tbody>';
+    // Panneau de socle (19mm) : L = largeur totale, H = 120mm
+    var nbPieds = Math.ceil(largTotale/600)+1;
+    var profPied = profSocle - epSocle; // profondeur pied = profondeur socle - ep panneau avant
+    var socleItems = [
+      {nom:'Vérin réglable Pilier', qte:nbPieds*2, L:'-', H:'-', mat:'Vérin métal', ep:11,
+       note:'H 100mm, réglable 82-125mm — '+nbPieds+' positions av+ar (1 toutes les ~600mm)'},
+      {nom:'Panneau socle',       qte:1, L:largTotale, H:profSocle, mat:matSocle, ep:epSocle,
+       note:'Pose à plat (dessus des pieds) — '+largTotale+'×'+profSocle+'mm'},
+      {nom:'Plinthe socle',       qte:1, L:largTotale, H:hSocle,    mat:matSocle, ep:epSocle,
+       note:'Face avant — décor '+decSocle+' — '+largTotale+'×'+hSocle+'mm'},
+    ];
+    socleItems.forEach(function(it){
+      h += '<tr style="border-bottom:1px solid #eee">';
+      h += '<td style="padding:4px 8px;font-weight:500">'+it.nom+'</td>';
+      h += '<td style="padding:4px 8px;text-align:center">'+it.qte+'</td>';
+      h += '<td style="padding:4px 8px;text-align:right">'+it.L+'</td>';
+      h += '<td style="padding:4px 8px;text-align:right">'+it.H+'</td>';
+      h += '<td style="padding:4px 8px"><span class="pill '+pOf(it.mat)+'">'+it.mat+'</span></td>';
+      h += '<td style="padding:4px 8px;font-size:10px;color:#666">'+it.note+'</td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    h += '<div style="font-size:10px;color:#888;margin-top:4px">Vérins Pilier 82-125mm + panneau '+epSocle+'mm → structure socle | Plinthe façade '+hSocle+'mm | Largeur totale  | Largeur totale : '+largTotale+'mm</div>';
+    h += '</div>';
   }
 
   document.getElementById('fiche').innerHTML=h;
@@ -2367,7 +2495,7 @@ function renderConso(){
     </div>
     <div style="background:#E1F5EE;border-radius:8px;padding:10px 14px;font-size:12px">
       <div style="font-weight:500;color:#085041;margin-bottom:6px">Coulisses Cromic II — billes télescopique sortie totale 45kg</div>
-      ${Object.entries(couMap).map(([k,n])=>`<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Décalage fond bas mm</label><input type="number" id="tl-offset-\'+idx+\'" value="80" min="0" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>\';
+      ${Object.entries(couMap).map(([k,n])=>`<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Décalage tablette basse mm</label><input type="number" id="tl-offset-\'+idx+\'" value="80" min="0" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>\';
   html += \'<div>• <b>${k}</b> : <b>${n}</b> paire(s)</div>`).join('')}
     </div>`;
   }
@@ -2746,12 +2874,12 @@ document.addEventListener('keydown', e => {
   // Sélecteurs de chants (face pickers) — toutes les sections
   buildFP('joue', ['L1','l1','l2']);
   buildFP('tab');
-  // Pré-cocher L1 tablettes
+  // Pré-cocher L1 étagères
   (function(){ var cb=document.getElementById('fpc-tab-L1'); if(cb&&!cb.checked){cb.checked=true;syncFP('tab','L1','#1D9E75');} })();
   buildFP('port');
   buildFPmini('plinthe');
-  buildFPmini('fondbas');
-  buildFPmini('fondhaut');
+  buildFPmini('étagèrebas');
+  buildFPmini('étagèrehaut');
   buildFPmini('fondarriere');
   buildFPmini('fb',['L1']);
   buildFPmini('fh',['L1']);
@@ -2868,16 +2996,16 @@ function render3D(){
   // Joues
   var jg=m3(ep,H,P,col);jg.position.set(-L/2+ep/2-xp,hO+H/2,0);g.add(jg);
   var jd=m3(ep,H,P,col);jd.position.set(L/2-ep/2+xp,hO+H/2,0);g.add(jd);
-  // Fond haut
+  // Tablette haute
   var fh=m3(L,fheEp,P,col);fh.position.set(0,hO+H-fheEp/2,0);g.add(fh);
-  // Fond bas
+  // Tablette basse
   var fb=m3(L,feEp,P,'#dfc898');fb.position.set(0,hO+feEp/2,0);g.add(fb);
   // Plinthe ombre
   var pl=m3(L-ep*2,hpl,P-ep,'#aaa',0.1);pl.position.set(0,hO+hpl/2,0);g.add(pl);
   // Fond arrière
   var fa=m3(L,H-fheEp-feEp,5,'#8ab4d4',0.85);
   fa.position.set(0,hO+feEp+(H-fheEp-feEp)/2,-P/2+3-(xp?40:0));g.add(fa);
-  // Tablettes
+  // Étagères
   for(var t=0;t<nTab;t++){
     var ty=hO+hpl+(H-hpl-fheEp)*(t+1)/(nTab+1);
     var tab=m3(L-ep*2,ep,P-ep,'#e8d5b0');tab.position.set(0,ty,0);g.add(tab);
