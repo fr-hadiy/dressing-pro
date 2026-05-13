@@ -876,6 +876,7 @@ function addTiroirLigne(){
   html += '<div style="background:#f8f8f6;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Côtés ×2</div><div id="fp-tl-cote-'+idx+'"></div></div>';
   html += '<div style="background:#f8f8f6;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Avant ×1</div><div id="fp-tl-avant-'+idx+'"></div></div>';
   html += '<div style="background:#f8f8f6;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Arrière ×1</div><div id="fp-tl-arriere-'+idx+'"></div></div>';
+  html += '<div style="background:#f8f8f6;border-radius:6px;padding:4px 8px;margin-top:4px"><div style="font-size:10px;font-weight:500;margin-bottom:2px">Fond ×1</div><div id="fp-tl-fond-'+idx+'"></div></div>';
   html += '</div>';
   html += '<div id="tl-facade-'+idx+'" style="display:none;background:#E6F1FB;border-radius:6px;padding:8px 10px;margin-top:4px">';
   html += '<div style="font-size:10px;color:#0C447C;font-weight:500;margin-bottom:6px">Façade affleurante — Hettich 9073611 + plaque 9071595</div>';
@@ -929,6 +930,7 @@ function rdTiroirs(){
       cseule: document.getElementById('tl-cseule-'+idx) ? document.getElementById('tl-cseule-'+idx).checked : false,
       nb: +el.value||1,
       offset: +(document.getElementById('tl-offset-'+idx)||{value:80}).value||80,
+      chantFond: rdFPmini('tl-fond-'+idx),
       hcaisse: +(document.getElementById('tl-hcaisse-'+idx)||{}).value||120,
       prof: +(document.getElementById('tl-prof-'+idx)||{}).value||450,
       epCaisse: +(document.getElementById('tl-epcaisse-'+idx)||{}).value||10,
@@ -1250,20 +1252,12 @@ function toggleSoclePanHaut(){
 
 function rdFPmini(px){
   const f=[];
+  if(typeof initChantsRef==='function') initChantsRef();
   const refEl=document.getElementById('fpr-'+px);
-  const refVal=refEl?refEl.value.trim():'';
-  [['L1','Long sup.(L1)'],['L2','Long inf.(L2)'],['l1','Chant G (l1)'],['l2','Chant D (l2)']].forEach(([k,lbl])=>{
+  const refVal=refEl?refEl.value.trim():'✓';
+  [['L1','Long sup.(L1)'],['L2','Long inf.(L2)'],['l1','Chant G (l1)'],['l2','Chant D (l2)']].forEach(function([k,lbl]){
     const cb=document.getElementById('fpc-'+px+'-'+k);
-    if(cb&&cb.checked){
-      // Si ref vide, forcer initChantsRef et relire
-      if(!refVal && px==='fb' || px==='fh'){
-        initChantsRef();
-        const rv2=refEl?refEl.value.trim():'';
-        f.push({id:k,face:lbl,ref:rv2||'✓'});
-      } else {
-        f.push({id:k,face:lbl,ref:refVal||'✓'});
-      }
-    }
+    if(cb&&cb.checked) f.push({id:k,face:lbl,ref:refVal});
   });
   return f;
 }
@@ -1458,7 +1452,7 @@ function addSepLigne(){
   html += '</div></div>';
   div.innerHTML = html;
   cont.appendChild(div);
-  buildFPmini('sep-'+idx);
+  buildFPmini('sep-'+idx, ['L1','l1','l2']); // Même chants que les joues
 }
 
 function removeSep(idx){
