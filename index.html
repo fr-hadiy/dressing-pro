@@ -1441,9 +1441,9 @@ function addSepLigne(){
   // Sys32
   html += '<div style="background:#f4f2ff;border-radius:6px;padding:6px 8px">';
   html += '<div style="font-size:10px;font-weight:500;margin-bottom:4px;color:#3C3489">Crémaillère</div>';
-  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="aucun" checked style="accent-color:#3C3489"/> Aucune</label>';
+  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="aucun" style="accent-color:#3C3489"/> Aucune</label>';
   html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="1f-avar" style="accent-color:#3C3489"/> 1 face — av+ar</label>';
-  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="2f-avar" style="accent-color:#3C3489"/> 2 faces — av+ar (2 rangées)</label>';
+  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="2f-avar" checked style="accent-color:#3C3489"/> 2 faces — av+ar (2 rangées)</label>';
   html += '</div></div>';
 
   // Sections G et D
@@ -1495,6 +1495,10 @@ function rdSeps(){
     var s32val = 'aucun';
     var radios = document.querySelectorAll('input[name="sep-s32-'+idx+'"]');
     radios.forEach(function(r){ if(r.checked) s32val = r.value; });
+    // Si aucun radio coché, prendre le premier non-aucun
+    if(s32val === 'aucun'){
+      radios.forEach(function(r){ if(r.value !== 'aucun' && r.checked) s32val = r.value; });
+    }
     lines.push({
       pos: +el.value||0,
       mat: (document.getElementById('sep-mat-'+idx)||{}).value||'même',
@@ -1531,18 +1535,18 @@ function calcSeps(seps, c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32d
     var sepH = sepHauto;      // hauteur utile
     // Usinage sys32 sur la séparation — calculé indépendamment du caisson
     var sepS32 = null;
-    console.log('[DEBUG SEP] sep.s32=', JSON.stringify(sep.s32), 'pos=', sep.pos);
-    if(sep.s32 && sep.s32 !== 'aucun'){
-      var sepCremFaces = sep.s32.endsWith('avar') ? 2 : 1;
+    var sepS32val = sep.s32 || sep.cremType || 'aucun';
+    if(sepS32val && sepS32val !== 'aucun'){
+      var sepCremFaces = sepS32val.endsWith('avar') ? 2 : 1;
       sepS32 = cS32(H, P, ep, c.r1||37, c.r2||37, c.pas||32, sepCremFaces, fe);
     }
     pieces.push({
       nom: 'Séparation '+(i+1)+' (pos. '+sep.pos+'mm)',
       L: sepH, H: sepL, qte: 1,  // L=grand côté (H caisson), l=profondeur
       mat: sepMat, ep: sepEp,
-      chants: sep.chants||[], decor: sep.ref,
-      type: 'separation',
-      s32: sepS32, taq: c.taq, cremType: sep.s32,
+      chants: sep.chants||[], decor: sep.ref||c.decor||'',  // idem joues pour groupement
+      type: 'joue',  // séparation = joue intérieure
+      s32: sepS32, taq: c.taq, cremType: sepS32val,
       fil: c.fil
     });
     // Sous-largeurs : gauche = sep.pos - ep/2 (approx), calculées depuis l'intérieur
@@ -2308,12 +2312,15 @@ function rowHtml(p,hasSys32){
   const fm={};(p.chants||[]).forEach(ch=>fm[ch.id]=ch.ref||'✓');
   let s32c='';
   if(hasSys32){
-    if(p.s32&&(p.type==='joue'||p.type==='separation')){console.log('[DEBUG ROW] type=',p.type,'s32=',!!p.s32,'cremType=',p.cremType);const sd=p.s32;s32c=`<td style="font-size:9px;line-height:1.6;min-width:180px">
+    if(p.s32&&p.type==='joue'){const sd=p.s32;s32c=`<td style="font-size:9px;line-height:1.6;min-width:180px">
               <div style="font-weight:500;color:#3C3489">${p.cremType&&p.cremType.startsWith('2f')?'Crémaillère 2 faces':'Crémaillère 1 face'}</div>
               Ø 5 mm — pas ${sd.pas} mm — ${sd.nb} trous<br>
               Premier trou : ${sd.pt} mm / Dernier trou : ${sd.dt} mm depuis le bas brut<br>
               Série avant à ${sd.r1} mm du chant avant — Série arrière à ${sd.r2} mm du chant arrière<br>
-              Taquet : ${p.taq||'Non débouchant Ø 5 mm'}
+              Taquet : ${p.taq||'Non débouchant Ø 5 mm'}${p.nom.startsWith('Séparation')?`<br><span style="background:#fff3cd;color:#856404;font-weight:600;padding:2px 5px;border-radius:3px;display:inline-block;margin-top:2px">
+              📐 ÉTAPE 1 — Débit à ${p.H}mm avec les joues → perçage sys32 identique<br>
+              ✂ ÉTAPE 2 — Après taquets : raccourcir à ${p.H-38}mm (−38mm = 2× ep. tablettes H+B)
+              </span>`:''}
             </td>`;}
     else if(p.type==='étagère')s32c='<td style="font-size:9px;color:#888">taquets</td>';
     else s32c='<td></td>';
@@ -2357,7 +2364,7 @@ function rstFull(){
   let h='';
   caissons.forEach((c,i)=>{
     const ms=rM(c.mat,c.ep),s32=c.pieces.find(p=>p.s32)?.s32;
-    const hs=c.pieces.some(p=>p.s32&&(p.type==='joue'||p.type==='separation'));
+    const hs=c.pieces.some(p=>p.s32&&p.type==='joue');
     h+=`<div class="card">
       <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:.5rem;flex-wrap:wrap">
         <div style="flex-shrink:0">${(function(){try{return drawCaisson(c);}catch(e){return '<svg width="100" height="100"><text x="10" y="50" font-size="10" fill="red">Erreur croquis</text></svg>';}})()}</div>
@@ -2515,7 +2522,7 @@ function renderDebit(){
   </div>`;
   Object.entries(pM).forEach(([k,d])=>{
     const s=d.pieces.reduce((a,p)=>a+p.L*p.H/1e6,0);
-    const hs=d.pieces.some(p=>p.s32&&(p.type==='joue'||p.type==='separation'));
+    const hs=d.pieces.some(p=>p.s32&&p.type==='joue');
     h+=`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;flex-wrap:wrap">
       <span class="pill ${pOf(d.mat)}" style="font-size:11px;padding:3px 10px">${d.mat}</span>
       ${d.decor?`<span style="font-size:11px;color:#888">${d.decor}</span>`:''}
@@ -2526,7 +2533,12 @@ function renderDebit(){
         <th style="color:#1D9E75">L1↑</th><th style="color:#1D9E75">L2↓</th>
         <th style="color:#185FA5">l1←</th><th style="color:#185FA5">l2→</th>
         <th>Fil</th>${hs?'<th style="min-width:210px">Crémaillère / Sys32 — Dispano</th>':''}<th>m²</th><th>✓</th></tr></thead>
-      <tbody>${d.pieces.map((p,i)=>{
+      <tbody>${d.pieces.slice().sort((a,b)=>{
+          // Joues et séparations en premier, puis autres pièces
+          const order = {joue:0, étagèrehaut:1, étagèrebas:2, fondarriere:3, etagere:4, porte:5, tiroir:6, socle:7};
+          const oa = order[a.type]??5, ob = order[b.type]??5;
+          return oa - ob;
+        }).map((p,i)=>{
         const fm={};(p.chants||[]).forEach(ch=>fm[ch.id]=ch.ref||'✓');
         let s32c='';
         if(hs){
@@ -2538,7 +2550,7 @@ function renderDebit(){
               </div>
               <div style="font-size:9px;line-height:1.8;color:#333">
                 <span style="color:#666">Rangées:</span>
-                <strong>${p.cremType==='2f-avar'?'2×Av+Ar':p.cremType==='2f-av'?'2×Av':p.cremType==='1f-avar'?'1×Av+Ar':'1×Av'}</strong>
+                <strong>${p.cremType==='2f-avar'?'2 faces Av+Ar':p.cremType==='2f-av'?'2 faces Av':p.cremType==='1f-avar'?'1 face Av+Ar':'1 face Av'}</strong>
                 &nbsp;&nbsp;
                 <span style="color:#666">Pas:</span> <strong>${sd.pas}mm</strong>
                 &nbsp;&nbsp;
@@ -2548,6 +2560,7 @@ function renderDebit(){
                 <span style="color:#666">Taq:</span> <strong>${(p.taq||'ND Ø5').replace('Non débouchant','ND')}</strong>
                 &nbsp;&nbsp;
                 <span style="font-weight:600;color:${symOk?'#1D9E75':'#c0392b'}">${symOk?'✓ Sym.OK':'⚠ Écart '+sd.delta+'mm'}</span>
+                ${p.nom.startsWith('Séparation')?`<br><span style="background:#fff3cd;color:#856404;font-weight:600;font-size:9px;display:inline-block;margin-top:3px;padding:2px 4px;border-radius:3px">📐 Étape 1 : débit à ${p.L}mm avec les joues → sys32 identique &nbsp;|&nbsp; ✂ Étape 2 : raccourcir à ${p.L-38}mm après taquets</span>`:''}
               </div>
             </td>`;
           }
@@ -3013,6 +3026,10 @@ function rdSeps(){
     var s32val = 'aucun';
     var radios = document.querySelectorAll('input[name="sep-s32-'+idx+'"]');
     radios.forEach(function(r){ if(r.checked) s32val = r.value; });
+    // Si aucun radio coché, prendre le premier non-aucun
+    if(s32val === 'aucun'){
+      radios.forEach(function(r){ if(r.value !== 'aucun' && r.checked) s32val = r.value; });
+    }
     lines.push({
       pos:    +el.value||0,
       mat:    (document.getElementById('sep-mat-'+idx)||{}).value||'même',
