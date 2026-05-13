@@ -1250,9 +1250,20 @@ function toggleSoclePanHaut(){
 
 function rdFPmini(px){
   const f=[];
+  const refEl=document.getElementById('fpr-'+px);
+  const refVal=refEl?refEl.value.trim():'';
   [['L1','Long sup.(L1)'],['L2','Long inf.(L2)'],['l1','Chant G (l1)'],['l2','Chant D (l2)']].forEach(([k,lbl])=>{
-    const cb=document.getElementById(`fpc-${px}-${k}`);
-    if(cb&&cb.checked){const ref=document.getElementById(`fpr-${px}`);f.push({id:k,face:lbl,ref:ref?ref.value.trim():''});}
+    const cb=document.getElementById('fpc-'+px+'-'+k);
+    if(cb&&cb.checked){
+      // Si ref vide, forcer initChantsRef et relire
+      if(!refVal && px==='fb' || px==='fh'){
+        initChantsRef();
+        const rv2=refEl?refEl.value.trim():'';
+        f.push({id:k,face:lbl,ref:rv2||'✓'});
+      } else {
+        f.push({id:k,face:lbl,ref:refVal||'✓'});
+      }
+    }
   });
   return f;
 }
@@ -1927,6 +1938,8 @@ function calcPieces(c){
 // ADD CAISSON
 // ══════════════════════════════════════════════════════
 function addC(){
+  // S'assurer que les champs chants sont remplis avant lecture
+  if(typeof initChantsRef==='function') initChantsRef();
   // Si on est en mode édition, rediriger vers updateC
   if(typeof editingIndex !== 'undefined' && editingIndex >= 0){ updateC(); return; }
   // Numérotation automatique C01, C02... si nom vide
