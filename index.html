@@ -1252,8 +1252,9 @@ function toggleSoclePanHaut(){
 
 function rdFPmini(px){
   const f=[];
-  if(typeof initChantsRef==='function') initChantsRef();
   const refEl=document.getElementById('fpr-'+px);
+  // Assurer que fpr a une valeur (sans réinitialiser les cases)
+  if(refEl && !refEl.value) initChantsRef();
   const refVal=refEl?refEl.value.trim():'✓';
   [['L1','Long sup.(L1)'],['L2','Long inf.(L2)'],['l1','Chant G (l1)'],['l2','Chant D (l2)']].forEach(function([k,lbl]){
     const cb=document.getElementById('fpc-'+px+'-'+k);
@@ -1407,52 +1408,78 @@ function addSepLigne(){
   var html = '';
   html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
   html += '<span style="font-size:11px;font-weight:500;color:#3C3489">Séparation '+(idx+1)+'</span>';
+  html += '<div id="sep-info-'+idx+'" style="font-size:10px;color:#888;margin-left:8px"></div>';
   html += '<button onclick="removeSep('+idx+')" class="btn-r" style="margin-left:auto;padding:2px 8px;font-size:10px">✕</button>';
   html += '</div>';
+
+  // Position + dimensions auto (= joues)
   html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px">';
-  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Position depuis gauche mm</label>';
-  html += '<input type="number" id="sep-pos-'+idx+'" value="0" placeholder="ex: 400" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Position axe (depuis bord G int.) mm</label>';
+  html += '<input type="number" id="sep-pos-'+idx+'" value="0" placeholder="ex: 500" oninput="updateSepInfo('+idx+')" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
   html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Matériau</label>';
   html += '<select id="sep-mat-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
-  html += '<option value="même">Même struct.</option><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option><option value="MDF brut">MDF brut</option>';
+  html += '<option value="même">← Même struct.</option><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option>';
   html += '</select></div>';
   html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Épaisseur mm</label>';
   html += '<select id="sep-ep-'+idx+'" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
-  html += '<option value="même">Même</option><option value="19">19</option><option value="18">18</option><option value="22">22</option><option value="16">16</option>';
+  html += '<option value="même" selected>← Même joues</option><option value="19">19</option><option value="18">18</option>';
   html += '</select></div>';
-  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Référence</label>';
-  html += '<input type="text" id="sep-ref-'+idx+'" placeholder="si différent" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Référence décor</label>';
+  html += '<input type="text" id="sep-ref-'+idx+'" placeholder="← idem joues" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
   html += '</div>';
-  // Chants séparation
+
+  // Dimensions auto affichées
+  html += '<div id="sep-dims-'+idx+'" style="font-size:10px;color:#3C3489;background:#f4f2ff;padding:4px 8px;border-radius:6px;margin-bottom:6px">';
+  html += 'H × l = identiques aux joues — calculées automatiquement selon le caisson</div>';
+
+  // Chants (comme joues : L1 l1 l2)
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px">';
-  html += '<div style="background:#f4f2ff;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Chant(s) séparation</div><div id="fp-sep-'+idx+'"></div></div>';
+  html += '<div style="background:#f4f2ff;border-radius:6px;padding:5px 8px"><div style="font-size:10px;font-weight:500;margin-bottom:3px">Chants — L1 (grand côté haut) · l1 l2 (petits côtés)</div>';
+  html += '<div id="fp-sep-'+idx+'"></div>';
+  html += '<input id="fpr-sep-'+idx+'" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/></div>';
+
+  // Sys32
   html += '<div style="background:#f4f2ff;border-radius:6px;padding:6px 8px">';
-  html += '<div style="font-size:10px;font-weight:500;margin-bottom:4px;color:#3C3489">Système 32 / 37 — crémaillère</div>';
+  html += '<div style="font-size:10px;font-weight:500;margin-bottom:4px;color:#3C3489">Crémaillère</div>';
+  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="aucun" checked style="accent-color:#3C3489"/> Aucune</label>';
+  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="1f-avar" style="accent-color:#3C3489"/> 1 face — av+ar</label>';
+  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer"><input type="radio" name="sep-s32-'+idx+'" value="2f-avar" style="accent-color:#3C3489"/> 2 faces — av+ar (2 rangées)</label>';
+  html += '</div></div>';
+
+  // Sections G et D
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">';
+
+  // SECTION GAUCHE
+  html += '<div style="background:#f8f8f8;border-radius:6px;padding:6px 8px">';
+  html += '<div style="font-size:10px;font-weight:500;color:#185FA5;margin-bottom:5px">◀ Section gauche</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';
-  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer">';
-  html += '<input type="radio" name="sep-s32-'+idx+'" value="aucun" checked style="accent-color:#3C3489"/> Aucun</label>';
-  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer">';
-  html += '<input type="radio" name="sep-s32-'+idx+'" value="1f-av" style="accent-color:#3C3489"/> 1 rangée avant</label>';
-  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer">';
-  html += '<input type="radio" name="sep-s32-'+idx+'" value="2f-avar" style="accent-color:#3C3489"/> 2 faces av+ar</label>';
-  html += '<label style="display:flex;align-items:center;gap:4px;font-size:10px;cursor:pointer">';
-  html += '<input type="radio" name="sep-s32-'+idx+'" value="2faces" style="accent-color:#3C3489"/> 2 faces ×2 rangées</label>';
-  html += '</div></div></div>';
-  // Étagères et portes par section
-  html += '<div style="background:#fafaf8;border-radius:6px;padding:6px 10px;margin-top:4px">';
-  html += '<div style="font-size:10px;font-weight:500;color:#666;margin-bottom:5px">Section gauche (entre joue G et séparation)</div>';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px">';
-  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb étagères</label><input type="number" id="sep-tabn-g-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
-  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb portes</label><input type="number" id="sep-portn-g-'+idx+'" value="1" min="0" max="4" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
-  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Type porte</label>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb étagères G</label><input type="number" id="sep-tabn-g-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb tiroirs G</label><input type="number" id="sep-tirn-g-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb portes G</label><input type="number" id="sep-portn-g-'+idx+'" value="1" min="0" max="4" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Type porte G</label>';
   html += '<select id="sep-portt-g-'+idx+'" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
   html += '<option value="Battante">Battante</option><option value="Coulissante">Coulissante</option><option value="Aucune">Aucune</option>';
   html += '</select></div>';
-  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Recouvrement mm</label><input type="number" id="sep-rec-g-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
   html += '</div></div>';
+
+  // SECTION DROITE
+  html += '<div style="background:#f8f8f8;border-radius:6px;padding:6px 8px">';
+  html += '<div style="font-size:10px;font-weight:500;color:#1D9E75;margin-bottom:5px">Section droite ▶</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb étagères D</label><input type="number" id="sep-tabn-d-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb tiroirs D</label><input type="number" id="sep-tirn-d-'+idx+'" value="0" min="0" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Nb portes D</label><input type="number" id="sep-portn-d-'+idx+'" value="1" min="0" max="4" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/></div>';
+  html += '<div><label style="font-size:10px;color:#666;display:block;margin-bottom:2px">Type porte D</label>';
+  html += '<select id="sep-portt-d-'+idx+'" style="height:26px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 4px">';
+  html += '<option value="Battante">Battante</option><option value="Coulissante">Coulissante</option><option value="Aucune">Aucune</option>';
+  html += '</select></div>';
+  html += '</div></div>';
+  html += '</div>'; // fin grid G/D
+
   div.innerHTML = html;
   cont.appendChild(div);
-  buildFPmini('sep-'+idx, ['L1','l1','l2']); // Même chants que les joues
+  buildFPmini('sep-'+idx, ['L1','l1','l2']); // comme les joues
+  initChantsRef();
 }
 
 function removeSep(idx){
@@ -1475,8 +1502,14 @@ function rdSeps(){
       ref: (document.getElementById('sep-ref-'+idx)||{}).value||'',
       chants: rdFPmini('sep-'+idx),
       s32: s32val,
-      tabNG:   +(document.getElementById('sep-tabn-g-'+idx)||{}).value||0,
-      portNG:  +(document.getElementById('sep-portn-g-'+idx)||{}).value||1,
+      tabNG:    +(document.getElementById('sep-tabn-g-'+idx)||{}).value||0,
+      tirNG:    +(document.getElementById('sep-tirn-g-'+idx)||{}).value||0,
+      portNG:   +(document.getElementById('sep-portn-g-'+idx)||{}).value||1,
+      portTypeG:(document.getElementById('sep-portt-g-'+idx)||{}).value||'Battante',
+      tabND:    +(document.getElementById('sep-tabn-d-'+idx)||{}).value||0,
+      tirND:    +(document.getElementById('sep-tirn-d-'+idx)||{}).value||0,
+      portND:   +(document.getElementById('sep-portn-d-'+idx)||{}).value||1,
+      portTypeD:(document.getElementById('sep-portt-d-'+idx)||{}).value||'Battante',
       portTG:  (document.getElementById('sep-portt-g-'+idx)||{}).value||'Battante',
       recG:    +(document.getElementById('sep-rec-g-'+idx)||{}).value||0,
     });
@@ -1489,21 +1522,23 @@ function calcSeps(seps, c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32d
   var jH=+c.jH||2, jB=+c.jB||2, jE=+c.jE||3;
   // Dimensions d'une séparation = même que joue intérieure
   // L = profondeur utile, H = hauteur joue - ep tablette haute - ep tablette basse
-  var sepHauto = H - fhe - fe;
+  var sepHauto = H;  // Séparation = même hauteur que les joues
   seps.forEach(function(sep, i){
     var sepEp = sep.ep==='même' ? ep : +sep.ep;
     var sepMat = sep.mat==='même' ? rM(c.mat, ep) : sep.mat;
     // Cotes séparation
     var sepL = profUtileInt;  // profondeur utile
     var sepH = sepHauto;      // hauteur utile
-    // Usinage sys32 sur la séparation
+    // Usinage sys32 sur la séparation — calculé indépendamment du caisson
     var sepS32 = null;
-    if(sep.s32 !== 'aucun' && s32data){
-      sepS32 = s32data;
+    console.log('[DEBUG SEP] sep.s32=', JSON.stringify(sep.s32), 'pos=', sep.pos);
+    if(sep.s32 && sep.s32 !== 'aucun'){
+      var sepCremFaces = sep.s32.endsWith('avar') ? 2 : 1;
+      sepS32 = cS32(H, P, ep, c.r1||37, c.r2||37, c.pas||32, sepCremFaces, fe);
     }
     pieces.push({
       nom: 'Séparation '+(i+1)+' (pos. '+sep.pos+'mm)',
-      L: sepL, H: sepH, qte: 1,
+      L: sepH, H: sepL, qte: 1,  // L=grand côté (H caisson), l=profondeur
       mat: sepMat, ep: sepEp,
       chants: sep.chants||[], decor: sep.ref,
       type: 'separation',
@@ -1512,8 +1547,9 @@ function calcSeps(seps, c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32d
     });
     // Sous-largeurs : gauche = sep.pos - ep/2 (approx), calculées depuis l'intérieur
     // Section G : de la joue G au bord gauche de la séparation
-    var sousLargG = sep.pos - sepEp/2;
-    var tabAutoH = profUtileInt;
+    var sousLargG = Math.round(sep.pos - sepEp/2);
+    var sousLargD = Math.round(largUtile - sep.pos - sepEp/2);
+    var tabAutoH  = profUtileInt;
     // Étagères section gauche
     for(var t=1; t<=sep.tabNG; t++){
       pieces.push({
@@ -1527,7 +1563,7 @@ function calcSeps(seps, c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32d
     }
     // Portes section gauche
     if(sep.portNG > 0 && sep.portTG !== 'Aucune'){
-      var portHg = H - hpl - jH - jB;
+      var portHg = H - 4;  // hauteur porte = H - 4mm
       var portLg = Math.round((sousLargG - jE*(sep.portNG-1) + 2*sep.recG) / sep.portNG);
       pieces.push({
         nom: 'Porte section G-'+(i+1)+' (×'+sep.portNG+')',
@@ -1537,6 +1573,33 @@ function calcSeps(seps, c, ep, H, P, largUtile, profUtileInt, hpl, fe, fhe, s32d
         chants: c.portChants||[], decor: c.portd||c.decor,
         type: 'porte',
         jd: 'Jeu H'+jH+'/B'+jB+'/E'+jE+'mm'+(sep.recG?' Rec'+sep.recG+'mm':'')
+      });
+    }
+
+    // ── Section DROITE ──
+    // Étagères section droite
+    for(var td=1; td<=sep.tabND; td++){
+      pieces.push({
+        nom: 'Étagère section D-'+(i+1)+' n°'+td,
+        L: sousLargD, H: tabAutoH, qte: 1,
+        mat: rM(c.tabm==='même'?c.mat:c.tabm, c.tabep==='même'?ep:+c.tabep),
+        ep: c.tabep==='même'?ep:+c.tabep,
+        chants: c.tabChants||[], decor: c.tabd||c.decor,
+        type: 'étagère'
+      });
+    }
+    // Portes section droite
+    if(sep.portND > 0 && sep.portTD !== 'Aucune'){
+      var portHd = H - 4;
+      var portLd = Math.round((sousLargD - jE*(sep.portND-1)) / sep.portND);
+      pieces.push({
+        nom: 'Porte section D-'+(i+1)+' (×'+sep.portND+')',
+        L: portLd, H: portHd, qte: sep.portND,
+        mat: rM(c.portm==='même'?c.mat:c.portm, c.portep==='même'?ep:+c.portep),
+        ep: c.portep==='même'?ep:+c.portep,
+        chants: c.portChants||[], decor: c.portd||c.decor,
+        type: 'porte',
+        jd: 'Jeu H'+jH+'/B'+jB+'/E'+jE+'mm'
       });
     }
   });
@@ -1651,15 +1714,20 @@ function drawCaisson(c){
 
 
 function updateSepInfo(idx){
+  var pos = +(document.getElementById('sep-pos-'+idx)||{value:0}).value||0;
   var L   = +(document.getElementById('c-l')||{value:600}).value||600;
   var ep  = +(document.getElementById('c-ep')||{value:19}).value||19;
-  var pos = +(document.getElementById('sep-pos-'+idx)||{value:0}).value||0;
-  var sepEpEl = document.getElementById('sep-ep-'+idx);
-  var sepEp = sepEpEl && sepEpEl.value !== 'meme' && !isNaN(+sepEpEl.value) ? +sepEpEl.value : ep;
-  var largG = Math.round(pos - ep - sepEp/2);
-  var largD = Math.round(L - ep - pos - sepEp/2);
-  var el = document.getElementById('sep-info-'+idx);
-  if(el) el.textContent = 'G: '+largG+'mm  /  D: '+largD+'mm';
+  var epSep = (document.getElementById('sep-ep-'+idx)||{}).value||'même';
+  var sepEp = (epSep==='même'||isNaN(+epSep))?ep:+epSep;
+  var largUtile = L - 2*ep;
+  var sousG = pos - sepEp/2;
+  var sousD = largUtile - pos - sepEp/2;
+  var dimsEl = document.getElementById('sep-dims-'+idx);
+  var infoEl = document.getElementById('sep-info-'+idx);
+  if(dimsEl){
+    dimsEl.innerHTML = 'Section G : <strong>'+Math.round(sousG)+'mm</strong> | Séparation : <strong>'+sepEp+'mm</strong> | Section D : <strong>'+Math.round(sousD)+'mm</strong>';
+    dimsEl.style.color = (sousG<50||sousD<50)?'#c0392b':'#3C3489';
+  }
 }
 
 
@@ -2065,6 +2133,61 @@ function editC(i){
   var s = document.getElementById('lst-r');
   document.getElementById('proj-status').textContent = '✏️ Modification du caisson "'+c.nom+'" — modifiez puis cliquez Mettre à jour';
   document.getElementById('proj-status').style.color = '#996600';
+  // Restaurer les chants des panneaux
+  restoreChants('fb',   c.fbChants);
+  restoreChants('fh',   c.fhChants);
+  restoreChants('fa',   c.faChants);
+  restoreChants('joue', c.joueChants);
+  restoreChants('tab',  c.tabChants);
+  restoreChants('pl',   c.plChants);
+  // Restaurer les radios sys32 des séparations
+  // Restaurer les séparations depuis les données sauvegardées
+  if(c.sepLines && c.sepLines.length){
+    // Vider et recréer
+    var sepCont = document.getElementById('sep-lignes-list');
+    if(sepCont) sepCont.innerHTML = '';
+    sepIdx = 0;
+    c.sepLines.forEach(function(sep){
+      addSepLigne();
+      var i = sepIdx - 1;
+      // Restaurer position
+      var posEl = document.getElementById('sep-pos-'+i);
+      if(posEl) posEl.value = sep.pos||0;
+      // Restaurer mat/ep/ref
+      var matEl = document.getElementById('sep-mat-'+i);
+      if(matEl) matEl.value = sep.mat||'même';
+      var epEl = document.getElementById('sep-ep-'+i);
+      if(epEl) epEl.value = sep.ep||'même';
+      var refEl = document.getElementById('sep-ref-'+i);
+      if(refEl) refEl.value = sep.ref||'';
+      // Restaurer radio sys32
+      var radios = document.querySelectorAll('input[name="sep-s32-'+i+'"]');
+      radios.forEach(function(r){ r.checked = (r.value === (sep.s32||'aucun')); });
+      // Restaurer sections G/D
+      ['tabn-g','tirn-g','portn-g','tabn-d','tirn-d','portn-d'].forEach(function(f){
+        var el = document.getElementById('sep-'+f+'-'+i);
+        var key = f.replace(/-/g,'').replace('tabn','tabN').replace('tirn','tirN').replace('portn','portN');
+        var val = sep[key.replace('G','G').replace('D','D')];
+        if(el && val!==undefined) el.value = val;
+      });
+      // Restaurer chants
+      restoreChants('sep-'+i, sep.chants);
+      updateSepInfo(i);
+    });
+  }
+}
+
+// Restaure les cases à cocher chants depuis les données du caisson
+function restoreChants(px, chantsArray){
+  ['L1','L2','l1','l2'].forEach(function(k){
+    var cb = document.getElementById('fpc-'+px+'-'+k);
+    if(cb) cb.checked = (chantsArray||[]).some(function(ch){return ch.id===k;});
+  });
+  // Restaurer la référence chant
+  var refEl = document.getElementById('fpr-'+px);
+  if(refEl && chantsArray && chantsArray[0] && chantsArray[0].ref){
+    refEl.value = chantsArray[0].ref;
+  }
 }
 
 var editingIndex = -1;
@@ -2099,14 +2222,14 @@ function updateC(){
     joueChants:rdFP('joue'), fondEp:fe, fondHautEp:fhe,
     fbm:document.getElementById('c-fbm').value,
     fbd:document.getElementById('c-fbd').value,
-    fbChants:rdFPmini('étagèrebas'),
+    fbChants:rdFPmini('fb'),
     fhm:document.getElementById('c-fhm').value,
     fhd:document.getElementById('c-fhd').value,
-    fhChants:rdFPmini('étagèrehaut'),
+    fhChants:rdFPmini('fh'),
     fam:document.getElementById('c-fam').value,
     faEp:document.getElementById('c-fa-ep')?.value||'même',
     fad:document.getElementById('c-fad').value,
-    faChants:rdFPmini('fondarriere'),
+    faChants:rdFPmini('fa'),
     plm:document.getElementById('c-plm').value,
     pld:document.getElementById('c-pld').value,
     plChants:rdFPmini('plinthe'),
@@ -2185,7 +2308,7 @@ function rowHtml(p,hasSys32){
   const fm={};(p.chants||[]).forEach(ch=>fm[ch.id]=ch.ref||'✓');
   let s32c='';
   if(hasSys32){
-    if(p.s32&&p.type==='joue'){const sd=p.s32;s32c=`<td style="font-size:9px;line-height:1.6;min-width:180px">
+    if(p.s32&&(p.type==='joue'||p.type==='separation')){console.log('[DEBUG ROW] type=',p.type,'s32=',!!p.s32,'cremType=',p.cremType);const sd=p.s32;s32c=`<td style="font-size:9px;line-height:1.6;min-width:180px">
               <div style="font-weight:500;color:#3C3489">${p.cremType&&p.cremType.startsWith('2f')?'Crémaillère 2 faces':'Crémaillère 1 face'}</div>
               Ø 5 mm — pas ${sd.pas} mm — ${sd.nb} trous<br>
               Premier trou : ${sd.pt} mm / Dernier trou : ${sd.dt} mm depuis le bas brut<br>
@@ -2234,7 +2357,7 @@ function rstFull(){
   let h='';
   caissons.forEach((c,i)=>{
     const ms=rM(c.mat,c.ep),s32=c.pieces.find(p=>p.s32)?.s32;
-    const hs=c.pieces.some(p=>p.s32&&p.type==='joue');
+    const hs=c.pieces.some(p=>p.s32&&(p.type==='joue'||p.type==='separation'));
     h+=`<div class="card">
       <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:.5rem;flex-wrap:wrap">
         <div style="flex-shrink:0">${(function(){try{return drawCaisson(c);}catch(e){return '<svg width="100" height="100"><text x="10" y="50" font-size="10" fill="red">Erreur croquis</text></svg>';}})()}</div>
@@ -2392,7 +2515,7 @@ function renderDebit(){
   </div>`;
   Object.entries(pM).forEach(([k,d])=>{
     const s=d.pieces.reduce((a,p)=>a+p.L*p.H/1e6,0);
-    const hs=d.pieces.some(p=>p.s32&&p.type==='joue');
+    const hs=d.pieces.some(p=>p.s32&&(p.type==='joue'||p.type==='separation'));
     h+=`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;flex-wrap:wrap">
       <span class="pill ${pOf(d.mat)}" style="font-size:11px;padding:3px 10px">${d.mat}</span>
       ${d.decor?`<span style="font-size:11px;color:#888">${d.decor}</span>`:''}
