@@ -162,7 +162,21 @@ button:hover{background:#f0f0f0}
       </select>
     </div>
   </div>
-  <div style="font-size:10px;color:#3C3489;background:#f4f2ff;padding:5px 8px;border-radius:6px">
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:.5rem">
+    <div>
+      <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Chants — Plinthe socle</label>
+      <div id="fp-socle-pl"></div>
+      <input id="fpr-socle-pl" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
+        style="height:26px;font-size:11px;width:180px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
+    </div>
+    <div>
+      <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Chants — Panneau socle</label>
+      <div id="fp-socle-pan"></div>
+      <input id="fpr-socle-pan" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
+        style="height:26px;font-size:11px;width:180px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
+    </div>
+  </div>
+  <div style="font-size:10px;color:#3C3489;background:#f4f2ff;padding:5px 8px;border-radius:6px;margin-top:.5rem">
     📐 Pied réglable 11mm + panneau <span id="socle-ep-label">19</span>mm = structure.
     Plinthe <span id="socle-h-label">120</span>mm — même matériau que les caissons.
   </div>
@@ -1863,11 +1877,13 @@ function calcPieces(c){
   var socleProf = typeof window!=='undefined' ? (+(document.getElementById('socle-prof')||{value:0}).value||P)    : P;
   if(socleProf===0) socleProf=P;
   var faMsS=(c.fam==='même struct.'||c.fam==='même'||!c.fam)?rM(c.mat,ep):c.fam;
+  var soclePlChants=typeof rdFPmini==='function'?rdFPmini('socle-pl'):[];
+  var soclePanChants=typeof rdFPmini==='function'?rdFPmini('socle-pan'):[];
   pieces.push({nom:'Plinthe socle',  L:L, H:socleH,    qte:1, mat:faMsS, ep:socleEp,
-    chants:[], decor:c.decor||'', type:'socle',
+    chants:soclePlChants, decor:c.decor||'', type:'socle',
     note:'Façade socle — '+L+'×'+socleH+'mm'});
   pieces.push({nom:'Panneau socle',  L:L, H:socleProf,  qte:1, mat:faMsS, ep:socleEp,
-    chants:[], decor:c.decor||'', type:'socle',
+    chants:soclePanChants, decor:c.decor||'', type:'socle',
     note:'Dessus socle — '+L+'×'+socleProf+'mm'});
 
   // Pièces supplémentaires
@@ -2852,6 +2868,8 @@ document.addEventListener('keydown', e => {
   buildFPmini('étagèrehaut');
   buildFPmini('fondarriere');
   buildFPmini('fb',['L1']);
+  buildFPmini('socle-pl',['L1']);
+  buildFPmini('socle-pan',['L1']);
   buildFPmini('fh',['L1']);
   buildFPmini('fa');
   buildFPmini('pl');
