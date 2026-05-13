@@ -2864,13 +2864,11 @@ document.addEventListener('keydown', e => {
   (function(){ var cb=document.getElementById('fpc-tab-L1'); if(cb&&!cb.checked){cb.checked=true;syncFP('tab','L1','#1D9E75');} })();
   buildFP('port');
   buildFPmini('plinthe');
-  buildFPmini('étagèrebas');
-  buildFPmini('étagèrehaut');
+  buildFPmini('fb',['L1']);   // Tablette basse — ID interne 'fb'
+  buildFPmini('fh',['L1']);   // Tablette haute — ID interne 'fh'
   buildFPmini('fondarriere');
-  buildFPmini('fb',['L1']);
   buildFPmini('socle-pl',['L1']);
   buildFPmini('socle-pan',['L1']);
-  buildFPmini('fh',['L1']);
   buildFPmini('fa');
   buildFPmini('pl');
   buildFPmini('tir-enc');
