@@ -901,9 +901,9 @@ function addTiroirLigne(){
   html += '</div>';
   div.innerHTML = html;
   cont.appendChild(div);
-  buildFPmini('tl-cote-'+idx,    ['L1','L2','l1']);       // Côtés : L1 L2 l1
+  buildFPmini('tl-cote-'+idx,    ['L1']);         // Côtés : L1 par défaut       // Côtés : L1 L2 l1
   buildFPmini('tl-avant-'+idx,   ['L1','L2','l1','l2']); // Avant : L1 L2 l1 l2
-  buildFPmini('tl-arriere-'+idx, ['L1','L2']);             // Arrière : L1 L2
+  buildFPmini('tl-arriere-'+idx, ['L1']);                  // Arrière : L1 par défaut
   buildFPmini('tl-facade-'+idx,  ['L1','L2','l1','l2']); // Façade : tous
 }
 
@@ -975,16 +975,16 @@ function calcTiroirs(tiroirLines,c,ep,largUtile,tirEpCoul,pieces){
     var crom = cromCode(tl.prof, tl.amort);
     // Côtés : longueur = longueur coulisse (la coulisse détermine la longueur du côté)
     var longueurCoulisse = +tl.prof || 450;
-    var coteL = longueurCoulisse;  // côté = longueur coulisse
+    var coteL = longueurCoulisse - tl.epCaisse;  // côté = coulisse - ep (ex: 450-19=431mm)
     // Vérification profondeur utile minimale = coulisse + 40mm
     var profMinRequis = longueurCoulisse + 40;
     var profDisponible = +c.p - (+c.faEp||19||+c.ep); // profUtileInt approx.
-    var avArL = largCaisse - 2*tl.epCaisse;
+    var avArL = largCaisse;  // arrière L = avant L
     // Côtés et arrière réduits de 18mm pour logement coulisse
     var hcaisseReduit = Math.max(1, tl.hcaisse - 18);
     // Fond tiroir : L = largUtile - 8mm (jeu 4mm chaque côté)
     //              H = longueur coulisse - ep paroi arrière
-    var fondL = largCaisse - 10;                 // ex: 532-10=522mm pour L=600 (largCaisse - jeu 5mm chaque côté)
+    var fondL = largCaisse - 10;                 // fond L = avant - 10mm (ex: 532-10=522mm)
     var fondH = coteL;  // fond H = longueur côté (coulisse - ep)
     var fondP = fondH;  // alias
     var noteC = '';
@@ -994,7 +994,7 @@ function calcTiroirs(tiroirLines,c,ep,largUtile,tirEpCoul,pieces){
     }
     pieces.push({nom:label+' — Côtés (×'+(tl.nb*2)+')', L:coteL, H:hcaisseReduit, qte:tl.nb*2, mat:matC, ep:tl.epCaisse, chants:tl.chantCote||[], decor:tl.ref, type:'tiroir-caisse', note:noteC});
     pieces.push({nom:label+' — Avant×'+tl.nb,        L:largCaisse, H:tl.hcaisse, qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantAvant||[], decor:tl.ref, type:'tiroir-caisse'});
-    pieces.push({nom:label+' — Arr.×'+tl.nb,      L:avArL, H:hcaisseReduit, qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantArriere||[], decor:tl.ref, type:'tiroir-caisse'});
+    pieces.push({nom:label+' — Arr.×'+tl.nb,      L:avArL, H:Math.max(1,hcaisseReduit-12), qte:tl.nb, mat:matC, ep:tl.epCaisse, chants:tl.chantArriere||[], decor:tl.ref, type:'tiroir-caisse'});
     pieces.push({nom:label+' — Fond×'+tl.nb,         L:fondL, H:fondH, qte:tl.nb, mat:matF, ep:epF, chants:[], decor:'', type:'tiroir-caisse'});
     if(tl.type==='encastre' && !tl.cseule){
       var facEp  = tl.fep==='même' ? ep : +tl.fep;
