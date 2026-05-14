@@ -133,19 +133,28 @@ button:hover{background:#f0f0f0}
     <div><label>Date</label><input id="p-date" type="date"/></div>
     <div><label>N° devis</label><input id="p-devis" placeholder="DEV-001"/></div>
     <div><label>Notes projet</label><input id="p-notes-proj" placeholder="livraison, finition…"/></div>
+    <div>
+      <label>Jeu plafond mm <span style="font-size:9px;color:#888">(0 → 50mm)</span></label>
+      <input id="socle-jplaf" type="number" value="10" min="0" max="50" oninput="calcHauteurCaisson()"
+        style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
+      <div style="font-size:9px;color:#888;margin-top:2px">Espace entre le dessus du caisson et le plafond</div>
+    </div>
   </div>
 </div>
 
 <!-- SOCLE -->
 <div class="card">
-  <div class="st">Socle du dressing</div>
-
+  <div class="st" style="display:flex;align-items:center;gap:10px">
+    Socle du dressing
+    <label style="font-size:11px;font-weight:400;cursor:pointer;display:flex;align-items:center;gap:4px">
+      <input type="checkbox" id="socle-actif" checked onchange="toggleSocleActif()" style="width:13px;height:13px"/>
+      Avec socle
+    </label>
+  </div>
+  <div id="socle-params-wrap">
   <!-- Paramètres généraux -->
   <div class="g4" style="margin-bottom:.75rem">
-    <div>
-      <label>Jeu plafond mm</label>
-      <input id="socle-jplaf" type="number" value="10" oninput="calcHauteurCaisson()" style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
-    </div>
+
     <div>
       <label>Hauteur socle mm</label>
       <input id="socle-h" type="number" value="120" oninput="calcHauteurCaisson()" style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
@@ -161,24 +170,7 @@ button:hover{background:#f0f0f0}
   </div>
 
   <!-- Plinthe socle -->
-  <div class="card-sub" style="margin-bottom:.5rem">
-    <div class="st2">Plinthe socle (façade)</div>
-    <div class="g4" style="margin-bottom:.4rem">
-      <div><label>Largeur mm</label>
-        <input id="socle-pl-l" type="number" placeholder="Auto = L caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
-      </div>
-      <div><label>Hauteur mm</label>
-        <input id="socle-pl-h" type="number" value="120" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
-      </div>
-    </div>
-    <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Chants — aucun par défaut</label>
-    <div id="fp-socle-pl"></div>
-    <input id="fpr-socle-pl" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
-      style="height:26px;font-size:11px;width:200px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
-  </div>
-
-  <!-- Panneau socle bas -->
-  <div class="card-sub" style="margin-bottom:.5rem">
+  <div class="card-sub" id="socle-pan-wrap" style="margin-bottom:.5rem">
     <div class="st2">Panneau socle</div>
     <div class="g4" style="margin-bottom:.4rem">
       <div><label>Largeur mm</label>
@@ -195,7 +187,7 @@ button:hover{background:#f0f0f0}
   </div>
 
   <!-- Panneau socle haut (optionnel) -->
-  <div class="card-sub">
+  <div class="card-sub" id="socle-pan-haut-wrap-outer">
     <div class="st2" style="display:flex;align-items:center;gap:8px">
       <label style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px">
         <input type="checkbox" id="socle-pan-haut-on" onchange="toggleSoclePanHaut()" style="width:13px;height:13px"/>
@@ -217,7 +209,32 @@ button:hover{background:#f0f0f0}
         style="height:26px;font-size:11px;width:200px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
     </div>
   </div>
-</div>
+  </div><!-- /socle-params-wrap -->
+
+  <div class="card-sub" id="socle-pl-wrap" style="margin-bottom:.5rem">
+    <div class="st2" style="display:flex;align-items:center;gap:8px">
+      Plinthe socle (façade)
+      <label style="font-size:11px;font-weight:400;cursor:pointer;display:flex;align-items:center;gap:4px">
+        <input type="checkbox" id="plinthe-active" checked onchange="togglePlintheActive()" style="width:12px;height:12px"/>
+        Avec plinthe
+      </label>
+    </div>
+    <div class="g4" style="margin-bottom:.4rem">
+      <div><label>Largeur mm</label>
+        <input id="socle-pl-l" type="number" placeholder="Auto = L caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+      </div>
+      <div><label>Hauteur mm</label>
+        <input id="socle-pl-h" type="number" value="120" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+      </div>
+    </div>
+    <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Chants — aucun par défaut</label>
+    <div id="fp-socle-pl"></div>
+    <input id="fpr-socle-pl" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
+      style="height:26px;font-size:11px;width:200px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
+  </div>
+
+  <!-- Panneau socle bas -->
+</div><!-- /card socle -->
 
 <!-- CAISSON -->
 <div class="card">
@@ -235,7 +252,7 @@ button:hover{background:#f0f0f0}
           <input id="c-htotal" type="number" value="2200" oninput="calcHauteurCaisson()"/>
           <div style="margin-top:3px;font-size:10px;color:#3C3489">
             → Caisson : <strong id="c-h-auto">2070</strong>mm
-            <span style="color:#888">(H − 10 jeu − 120 socle)</span>
+            <span id="c-h-formula" style="color:#888"></span>
           </div>
           <input id="c-h" type="hidden" value="2070"/></div>
     <div><label>Profondeur ext. mm</label><input id="c-p" type="number" value="580" oninput="liveS32()"/></div>
@@ -386,6 +403,16 @@ button:hover{background:#f0f0f0}
     </div>
     <div style="margin-bottom:.5rem">
       <div style="font-size:11px;font-weight:500;color:#555;margin-bottom:4px">Fond arrière</div>
+        <div style="background:#f4f2ff;border-radius:6px;padding:5px 8px;margin-bottom:5px;font-size:10px">
+          <label style="cursor:pointer;display:flex;align-items:center;gap:5px;margin-bottom:2px">
+            <input type="radio" name="fa-assem" value="applique" checked onchange="calcHauteurCaisson();" style="accent-color:#3C3489"/>
+            <strong>Applique</strong> sur joues — P joue = P − ep.fond
+          </label>
+          <label style="cursor:pointer;display:flex;align-items:center;gap:5px">
+            <input type="radio" name="fa-assem" value="entre" onchange="calcHauteurCaisson();" style="accent-color:#3C3489"/>
+            <strong>Entre</strong> les joues — rainure/vissé — P joue = P
+          </label>
+        </div>
       <div class="g4">
         <div><label>Matériau</label>
           <select id="c-fam" onchange="syncFondsMat()">
@@ -1243,6 +1270,23 @@ function autoCheckL1FP(px){
 }
 
 
+function toggleSocleActif(){
+  var on = document.getElementById('socle-actif')?.checked;
+  // Masquer seulement les paramètres panneau socle, pas la plinthe
+  var panWrap = document.getElementById('socle-pan-wrap');
+  var panhWrap = document.getElementById('socle-pan-haut-wrap-outer');
+  if(panWrap) panWrap.style.display = on ? 'block' : 'none';
+  if(panhWrap) panhWrap.style.display = on ? 'block' : 'none';
+  calcHauteurCaisson();
+}
+
+function togglePlintheActive(){
+  var on = document.getElementById('plinthe-active')?.checked;
+  var wrap = document.getElementById('socle-pl-wrap');
+  if(wrap) wrap.style.display = on ? 'block' : 'none';
+}
+
+
 function toggleSoclePanHaut(){
   var on = document.getElementById('socle-pan-haut-on')?.checked;
   var wrap = document.getElementById('socle-pan-haut-wrap');
@@ -1332,8 +1376,10 @@ function cS32(H,P,ep,r1,r2,pas,series,feEp){
 }
 function calcHauteurCaisson(){
   var htotal  = +document.getElementById('c-htotal')?.value || 2200;
-  var jplaf   = +document.getElementById('socle-jplaf')?.value || 10;
-  var hsocle  = +document.getElementById('socle-h')?.value || 120;
+  var socleOn = document.getElementById('socle-actif')?.checked !== false;
+  var jplafEl = document.getElementById('socle-jplaf');
+  var jplaf   = jplafEl ? +jplafEl.value : 10;  // 0 accepté (pas de fallback || 10)
+  var hsocle  = socleOn ? (+document.getElementById('socle-h')?.value || 120) : 0;
   var hcaisson = htotal - jplaf - hsocle;
   var el = document.getElementById('c-h');
   var elAuto = document.getElementById('c-h-auto');
@@ -1345,6 +1391,14 @@ function calcHauteurCaisson(){
   var hLabel = document.getElementById('socle-h-label');
   if(epEl && epLabel) epLabel.textContent = epEl.value;
   if(hLabel) hLabel.textContent = hsocle;
+  // Mettre à jour la formule affichée dynamiquement
+  var formulaEl = document.getElementById('c-h-formula');
+  if(formulaEl){
+    var parts = ['H'];
+    if(jplaf > 0) parts.push('− '+jplaf+'mm jeu plafond');
+    if(socleOn && hsocle > 0) parts.push('− '+hsocle+'mm socle');
+    formulaEl.textContent = '(' + parts.join(' ') + ')';
+  }
   liveS32();
   updatePorteInfo();
   updateCharniereInfo();
@@ -1875,7 +1929,10 @@ function calcPieces(c){
   // Fond arrière APPLIQUE sur joues : P caisson = P joue + ep.fond arr.
   // → P joue = P - faEp → profondeur utile = P - faEp
   const faEpReal=(c.faEp==='même'||c.faEp==='même struct.'||c.faEp==='Même que joues'||!c.faEp)?ep:(+c.faEp||ep);
-  const profUtileInt = P - faEpReal;    // profondeur joue = P - ep.fond arrière
+  // Profondeur utile intérieure selon assemblage
+  // Applique : profUtile = P - faEp (joue = P - faEp)
+  // Entre    : profUtile = P - faEp (étagères = P - ep.fond, joue = P)
+  const profUtileInt = P - faEpReal;
   const hautUtile = H - fhe - fe;       // hauteur utile intérieure
 
   // Étagères
@@ -1897,9 +1954,20 @@ function calcPieces(c){
   // Fond arrière : L = H joue − hpl − ép.tablette haute − ép.tablette basse
   //   recalculé selon épaisseurs réelles de la structure
   // Fond arrière APPLIQUE TOTALE sur joues → l = L extérieur
-  // Fond arrière : hauteur = hauteur joues (H)
-  const faHauteur=H;
-  const faAutoL=faHauteur, faAutoH=L;
+  // Fond arrière : applique sur joues OU entre les joues
+  var faAssem = 'applique';
+  document.querySelectorAll('input[name="fa-assem"]').forEach(function(r){if(r.checked)faAssem=r.value;});
+  // Fond arrière hauteur :
+  // Applique : H caisson (idem joues)
+  // Entre    : H - ep.tablette haute - ep.tablette basse (entre les tablettes)
+  const faHauteur = (faAssem==='entre') ? (H - fhe - fe) : H;
+  // Fond arrière largeur :
+  // Applique : L caisson extérieur
+  // Entre    : L caisson extérieur (même, le fond couvre la même largeur)
+  // Fond arrière largeur :
+  // Applique : L caisson extérieur (fond couvre joues + intérieur)
+  // Entre    : largUtile = L - 2×ep.joue (fond s'insère entre les joues)
+  const faAutoL=faHauteur, faAutoH=(faAssem==='entre'?largUtile:L);
   const faL=c.faMan&&c.faManL>0?c.faManL:faAutoL, faH=c.faMan&&c.faManl>0?c.faManl:faAutoH;
   const faMat=(c.fam==='même struct.'||c.fam==='même'||c.fam==='Même que joues'||!c.fam)?rM(c.mat,ep):c.fam;
   const faEp=(c.faEp==='même'||c.faEp==='même struct.'||c.faEp==='Même que joues'||!c.faEp)?ep:(+c.faEp||ep);
@@ -1909,7 +1977,8 @@ function calcPieces(c){
 
   // Joues auto
   // Joue profondeur = P - ep.fond arrière (fond arrière applique sur joues)
-  const joueAutoL=H, joueAutoH=P-faEpReal;  // l = P joue = P - faEp
+  // Joue profondeur : Applique → P-faEp | Entre → P (pleine profondeur)
+  const joueAutoL=H, joueAutoH=(faAssem==='entre'?P:P-faEpReal);
   const joueL=c.joueMan&&c.joueManL>0?c.joueManL:joueAutoL, joueH=c.joueMan&&c.joueManl>0?c.joueManl:joueAutoH;
 
   // Portes auto
@@ -2488,8 +2557,8 @@ function renderDebit(){
     var _plCh  = rdFPmini('socle-pl');
     var _panCh = rdFPmini('socle-pan');
     var soclePieces = [
-      {nom:'Plinthe socle', L:_plL,  H:_plH,  qte:1, mat:_matS, ep:_ep, decor:_decS, chants:_plCh,  type:'socle', _c:'Socle'},
-      {nom:'Panneau socle', L:_panL, H:_panP,  qte:1, mat:_matS, ep:_ep, decor:_decS, chants:_panCh, type:'socle', _c:'Socle'},
+      ...((document.getElementById('plinthe-active')?.checked !== false)?[{nom:'Plinthe socle', L:_plL,  H:_plH,  qte:1, mat:_matS, ep:_ep, decor:_decS, chants:_plCh,  type:'socle', _c:'Socle'}]:[]),
+      ...((document.getElementById('socle-actif')?.checked !== false)?[{nom:'Panneau socle', L:_panL, H:_panP,  qte:1, mat:_matS, ep:_ep, decor:_decS, chants:_panCh, type:'socle', _c:'Socle'}]:[]),
     ];
     var _panhOn=(document.getElementById('socle-pan-haut-on')||{}).checked;
     if(_panhOn){
