@@ -151,67 +151,70 @@ button:hover{background:#f0f0f0}
       Avec socle
     </label>
   </div>
-  <div id="socle-params-wrap">
+
   <!-- Paramètres généraux -->
-  <div class="g4" style="margin-bottom:.75rem">
-
-    <div>
-      <label>Hauteur socle mm</label>
-      <input id="socle-h" type="number" value="120" oninput="calcHauteurCaisson()" style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
-    </div>
-    <div>
-      <label>Épaisseur mm</label>
-      <select id="socle-ep" onchange="calcHauteurCaisson()" style="height:30px;font-size:11px;border:1px solid #ddd;border-radius:6px;padding:0 6px;width:100%">
-        <option value="19" selected>19mm</option>
-        <option value="16">16mm</option>
-        <option value="22">22mm</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Plinthe socle -->
-  <div class="card-sub" id="socle-pan-wrap" style="margin-bottom:.5rem">
-    <div class="st2">Panneau socle</div>
-    <div class="g4" style="margin-bottom:.4rem">
-      <div><label>Largeur mm</label>
-        <input id="socle-pan-l" type="number" placeholder="Auto = L caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+  <div id="socle-params-wrap">
+    <div class="g4" style="margin-bottom:.75rem">
+      <div>
+        <label>Hauteur socle mm</label>
+        <input id="socle-h" type="number" value="120" oninput="calcHauteurCaisson()" style="height:30px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 8px"/>
       </div>
-      <div><label>Profondeur mm</label>
-        <input id="socle-prof" type="number" placeholder="Auto = P caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+      <div>
+        <label>Épaisseur mm</label>
+        <select id="socle-ep" onchange="calcHauteurCaisson()" style="height:30px;font-size:11px;border:1px solid #ddd;border-radius:6px;padding:0 6px;width:100%">
+          <option value="19" selected>19mm</option>
+          <option value="16">16mm</option>
+          <option value="22">22mm</option>
+        </select>
+        <div id="socle-ep-label" style="display:none">19</div>
+        <div id="socle-h-label" style="display:none">120</div>
       </div>
     </div>
-    <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Chants — L1 par défaut</label>
-    <div id="fp-socle-pan"></div>
-    <input id="fpr-socle-pan" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
-      style="height:26px;font-size:11px;width:200px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
-  </div>
 
-  <!-- Panneau socle haut (optionnel) -->
-  <div class="card-sub" id="socle-pan-haut-wrap-outer">
-    <div class="st2" style="display:flex;align-items:center;gap:8px">
-      <label style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px">
-        <input type="checkbox" id="socle-pan-haut-on" onchange="toggleSoclePanHaut()" style="width:13px;height:13px"/>
-        Panneau socle haut
-      </label>
-    </div>
-    <div id="socle-pan-haut-wrap" style="display:none;margin-top:.4rem">
+    <!-- Panneau socle -->
+    <div class="card-sub" id="socle-pan-wrap" style="margin-bottom:.5rem">
+      <div class="st2">Panneau socle</div>
       <div class="g4" style="margin-bottom:.4rem">
         <div><label>Largeur mm</label>
-          <input id="socle-panh-l" type="number" placeholder="Auto = L caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+          <input id="socle-pan-l" type="number" placeholder="Auto = cumul caissons" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
         </div>
         <div><label>Profondeur mm</label>
-          <input id="socle-panh-prof" type="number" placeholder="Auto = P caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+          <input id="socle-prof" type="number" placeholder="Auto = P caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
         </div>
       </div>
       <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Chants — L1 par défaut</label>
-      <div id="fp-socle-panh"></div>
-      <input id="fpr-socle-panh" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
+      <div id="fp-socle-pan"></div>
+      <input id="fpr-socle-pan" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
         style="height:26px;font-size:11px;width:200px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
     </div>
-  </div>
+
+    <!-- Panneau socle haut (optionnel) -->
+    <div class="card-sub" id="socle-pan-haut-wrap-outer">
+      <div class="st2" style="display:flex;align-items:center;gap:8px">
+        <label style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px">
+          <input type="checkbox" id="socle-pan-haut-on" onchange="toggleSoclePanHaut()" style="width:13px;height:13px"/>
+          Panneau socle haut
+        </label>
+      </div>
+      <div id="socle-pan-haut-wrap" style="display:none;margin-top:.4rem">
+        <div class="g4" style="margin-bottom:.4rem">
+          <div><label>Largeur mm</label>
+            <input id="socle-panh-l" type="number" placeholder="Auto = cumul caissons" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+          </div>
+          <div><label>Profondeur mm</label>
+            <input id="socle-panh-prof" type="number" placeholder="Auto = P caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+          </div>
+        </div>
+        <label style="font-size:11px;color:#666;display:block;margin-bottom:3px">Chants — L1 par défaut</label>
+        <div id="fp-socle-panh"></div>
+        <input id="fpr-socle-panh" type="text" placeholder="ABS 0,8mm décor" data-auto-chant="1"
+          style="height:26px;font-size:11px;width:200px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
+      </div>
+    </div>
   </div><!-- /socle-params-wrap -->
 
-  <div class="card-sub" id="socle-pl-wrap" style="margin-bottom:.5rem">
+  <!-- Plinthe socle -->
+  <div class="card-sub" id="socle-pl-wrap" style="margin-bottom:.5rem;margin-top:.5rem">
     <div class="st2" style="display:flex;align-items:center;gap:8px">
       Plinthe socle (façade)
       <label style="font-size:11px;font-weight:400;cursor:pointer;display:flex;align-items:center;gap:4px">
@@ -221,7 +224,7 @@ button:hover{background:#f0f0f0}
     </div>
     <div class="g4" style="margin-bottom:.4rem">
       <div><label>Largeur mm</label>
-        <input id="socle-pl-l" type="number" placeholder="Auto = L caisson" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
+        <input id="socle-pl-l" type="number" placeholder="Auto = cumul caissons" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
       </div>
       <div><label>Hauteur mm</label>
         <input id="socle-pl-h" type="number" value="120" style="height:28px;font-size:11px;width:100%;border:1px solid #ddd;border-radius:6px;padding:0 6px"/>
@@ -233,8 +236,7 @@ button:hover{background:#f0f0f0}
       style="height:26px;font-size:11px;width:200px;border:1px solid #ddd;border-radius:6px;padding:0 6px;margin-top:3px"/>
   </div>
 
-  <!-- Panneau socle bas -->
-</div><!-- /card socle -->
+</div>
 
 <!-- CAISSON -->
 <div class="card">
@@ -267,7 +269,7 @@ button:hover{background:#f0f0f0}
       <select id="c-mat"><option value="EGGER">EGGER mélaminé</option><option value="MDF mélaminé">MDF mélaminé</option><option value="MDF brut">MDF brut</option></select>
     </div>
     <div><label>Épaisseur mm</label>
-      <select id="c-ep" onchange="liveS32()"><option value="19" selected>19</option><option value="18">18</option><option value="22">22</option><option value="38">38</option><option value="16">16</option></select>
+      <select id="c-ep" onchange="liveS32()"><option value="19" selected>19</option><option value="18">18</option><option value="22">22</option><option value="16">16</option></select>
     </div>
     <div>
   <label>Référence / Décor EGGER</label>
@@ -275,7 +277,7 @@ button:hover{background:#f0f0f0}
     <select id="c-decor-select" onchange="applyDecorSelect()" style="flex:1;height:32px;font-size:11px;border-radius:8px;border:1px solid #ddd;padding:0 6px;background:#fff">
       <option value="">— Catalogue EGGER —</option>
     </select>
-    <input id="c-decor" value="W980 SM" placeholder="ou saisie libre" style="flex:1;font-size:11px"/>
+    <input id="c-decor" value="W980 SM" placeholder="ou saisie libre" oninput="initChantsRef()" style="flex:1;font-size:11px"/>
   </div>
 </div>
     <div><label>Rainure fond mm</label>
@@ -1143,16 +1145,25 @@ function initChantsRef(){
     : ('ABS 0,8mm'+(decor?' '+decor:''));
 
   // 1. Propager le décor dans tous les champs référence sous-éléments
+  // Mémoriser l'ancien décor pour comparaison
+  var prevDecor = document.getElementById('c-decor').__prevDecor||decor;
   ['c-fhd','c-fbd','c-fad','c-tabd','c-pld'].forEach(function(id){  // c-portd géré manuellement
     var el=document.getElementById(id);
-    if(el && (!el.value || el.dataset.autoDecor==='1')){
+    if(el && (!el.value || el.dataset.autoDecor==='1' || el.value===prevDecor)){
       el.value=decor; el.dataset.autoDecor='1';
     }
   });
+  var decEl2=document.getElementById('c-decor');
+  if(decEl2) decEl2.__prevDecor=decor;
 
   // 2. Pré-remplir tous les champs chant avec l'ABS correspondant
   document.querySelectorAll('[data-auto-chant="1"]').forEach(function(el){
     if(!el.value||el.value.startsWith('ABS 0,8mm')) el.value=absChant;
+  });
+  // 2b. Mettre à jour les champs fpr- des panneaux standards
+  ['fpr-fb','fpr-fh','fpr-fa','fpr-joue','fpr-tab','fpr-socle-pan','fpr-socle-pl'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el && (!el.value||el.value.startsWith('ABS 0,8mm'))) el.value=absChant;
   });
   // 3. S'assurer que L1+L2 sont cochés pour tablette basse et tablette haute
   ['fb','fh'].forEach(function(px){
@@ -1332,7 +1343,7 @@ function addPieceSup(){
       <div><label>L mm</label><input id="ps-L-${idx}" type="number" placeholder="L"/></div>
       <div><label>l mm</label><input id="ps-l-${idx}" type="number" placeholder="l"/></div>
       <div><label>Matériau</label><select id="ps-mat-${idx}"><option value="EGGER">EGGER</option><option value="MDF mélaminé">MDF mél.</option><option value="MDF brut">MDF brut</option><option value="HDF 5mm">HDF 5mm</option><option value="CTP">CTP</option></select></div>
-      <div><label>Ép. mm</label><select id="ps-ep-${idx}"><option value="19">19</option><option value="18">18</option><option value="22">22</option><option value="38">38</option><option value="16">16</option><option value="10">10</option><option value="8">8</option><option value="5">5</option></select></div>
+      <div><label>Ép. mm</label><select id="ps-ep-${idx}"><option value="19">19</option><option value="18">18</option><option value="22">22</option><option value="16">16</option><option value="10">10</option><option value="8">8</option><option value="5">5</option></select></div>
       <div><label>Référence</label><input id="ps-ref-${idx}" placeholder="décor…"/></div>
     </div>
     <div style="margin-top:4px"><label>Chant(s)</label><div id="fp-ps-${idx}"></div></div>
@@ -2246,61 +2257,6 @@ function editC(i){
       // Restaurer chants
       restoreChants('sep-'+i, sep.chants);
       updateSepInfo(i);
-    });
-  }
-  // === RESTAURATION TIROIRS ===
-  var tirCont = document.getElementById('tiroir-lignes-list');
-  if(tirCont){ tirCont.innerHTML = ''; window.tiroirIdx = 0; }
-  if(c.tiroirLines && c.tiroirLines.length){
-    c.tiroirLines.forEach(function(tl){
-      window.addTiroirLigne();
-      var tidx = window.tiroirIdx - 1;
-      var sv = function(id, val){ var el = document.getElementById(id); if(el && val !== undefined && val !== null) el.value = val; };
-      sv('tl-type-'+tidx, tl.type||'encastre');
-      sv('tl-nb-'+tidx, tl.nb||1);
-      sv('tl-hcaisse-'+tidx, tl.hcaisse||200);
-      sv('tl-prof-'+tidx, tl.prof||400);
-      sv('tl-epcaisse-'+tidx, tl.epCaisse||19);
-      sv('tl-je-'+tidx, tl.je||3);
-      sv('tl-mat-'+tidx, tl.mat||'m�me');
-      sv('tl-matfond-'+tidx, tl.matfond||'m�me caisse');
-      sv('tl-amort-'+tidx, tl.amort||'avec');
-      sv('tl-ref-'+tidx, tl.ref||'');
-      sv('tl-fjh-'+tidx, tl.fjh||1);
-      sv('tl-fje-'+tidx, tl.fje||2);
-      sv('tl-fmat-'+tidx, tl.fmat||'m�me');
-      sv('tl-fep-'+tidx, tl.fep||'m�me');
-      var cseuleEl = document.getElementById('tl-cseule-'+tidx);
-      if(cseuleEl) cseuleEl.checked = !!tl.cseule;
-      var fmanEl = document.getElementById('tl-fman-'+tidx);
-      if(fmanEl) fmanEl.checked = !!tl.facadeMan;
-      restoreChants('tl-cote-'+tidx, tl.chantCote||[]);
-      restoreChants('tl-avant-'+tidx, tl.chantAvant||[]);
-      restoreChants('tl-arriere-'+tidx, tl.chantArriere||[]);
-      restoreChants('tl-facade-'+tidx, tl.chantFacade||[]);
-    });
-  }
-  // === RESTAURATION PI�CES SUPPL�MENTAIRES ===
-  var psCont = document.getElementById('pieces-sup-list');
-  if(psCont){ psCont.innerHTML = ''; window.piecesSupIdx = 0; }
-  if(c.piecesSup && c.piecesSup.length){
-    c.piecesSup.forEach(function(ps){
-      window.addPieceSup();
-      var pidx = window.piecesSupIdx - 1;
-      var sv2 = function(id, val){ var el = document.getElementById(id); if(el && val !== undefined && val !== null) el.value = val; };
-      sv2('ps-nom-'+pidx, ps.nom||'');
-      sv2('ps-L-'+pidx, ps.L||'');
-      sv2('ps-l-'+pidx, ps.H||'');
-      var matBase = (ps.mat||'EGGER').split(' ')[0];
-      sv2('ps-mat-'+pidx, matBase);
-      var epEl = document.getElementById('ps-ep-'+pidx);
-      if(epEl){
-        var hasVal = Array.from(epEl.options).some(function(o){ return o.value == ps.ep; });
-        if(!hasVal){ var newOpt = new Option(ps.ep, ps.ep); epEl.add(newOpt, 1); }
-        epEl.value = ps.ep||19;
-      }
-      sv2('ps-ref-'+pidx, ps.decor||ps.ref||'');
-      restoreChants('ps-'+pidx, ps.chants||[]);
     });
   }
 }
