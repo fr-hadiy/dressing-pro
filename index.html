@@ -2246,6 +2246,8 @@ function editC(i){
       // Restaurer chants
       restoreChants('sep-'+i, sep.chants);
       updateSepInfo(i);
+    });
+  }
   // === RESTAURATION TIROIRS ===
   var tirCont = document.getElementById('tiroir-lignes-list');
   if(tirCont){ tirCont.innerHTML = ''; window.tiroirIdx = 0; }
@@ -2299,8 +2301,6 @@ function editC(i){
       }
       sv2('ps-ref-'+pidx, ps.decor||ps.ref||'');
       restoreChants('ps-'+pidx, ps.chants||[]);
-    });
-  }
     });
   }
 }
