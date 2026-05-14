@@ -537,7 +537,7 @@ button:hover{background:#f0f0f0}
           <option value="16">16</option>
         </select>
       </div>
-      <div><label>Référence</label><input id="c-portd" data-auto-decor="1" placeholder="si différent"/></div>
+      <div><label>Référence</label><input id="c-portd" placeholder="si différent"/></div>
     </div>
 
     <!-- Info montage -->
@@ -1116,7 +1116,7 @@ function initChantsRef(){
     : ('ABS 0,8mm'+(decor?' '+decor:''));
 
   // 1. Propager le décor dans tous les champs référence sous-éléments
-  ['c-fhd','c-fbd','c-fad','c-tabd','c-portd','c-pld'].forEach(function(id){
+  ['c-fhd','c-fbd','c-fad','c-tabd','c-pld'].forEach(function(id){  // c-portd géré manuellement
     var el=document.getElementById(id);
     if(el && (!el.value || el.dataset.autoDecor==='1')){
       el.value=decor; el.dataset.autoDecor='1';
